@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SmartAttend | About Project</title>
+    <link rel="icon" type="image/svg+xml" href="img/smartattend_logo.svg?v=4">
+    <meta name="theme-color" content="#4481eb">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f8fbff;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: #fff;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .navbar-brand {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            color: #292930;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .navbar-brand span {
+            color: #4481eb;
+        }
+
+        /* Hero Section */
+        .about-hero {
+            background: linear-gradient(135deg, rgba(68,129,235,0.05), rgba(4,190,254,0.05));
+            padding: 80px 0 60px;
+            text-align: center;
+            border-bottom: 1px solid rgba(68,129,235,0.1);
+        }
+
+        .about-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #292930;
+            margin-bottom: 20px;
+        }
+
+        .about-title span {
+            color: #4481eb;
+        }
+
+        /* Content Sections */
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #292930;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title i {
+            color: #4481eb;
+            background: rgba(68,129,235,0.1);
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 1.2rem;
+        }
+
+        .feature-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.02);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .tech-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #fff;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+            margin: 8px;
+            font-weight: 600;
+            color: #444;
+            border: 1px solid rgba(68,129,235,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .tech-badge:hover {
+            background: #4481eb;
+            color: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(68,129,235,0.3);
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #1a1a24;
+            padding: 40px 0 20px;
+            color: #fff;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .hover-white {
+            transition: color 0.2s ease;
+        }
+        .hover-white:hover {
+            color: #fff !important;
+        }
+    </style>
+    <style>
+        /* Global App Button Styles */
+        button, 
+        .btn, 
+        input[type="submit"], 
+        .toggle-eye, 
+        .nav_btn, 
+        .btn_primary {
+            -webkit-tap-highlight-color: transparent !important;
+            user-select: none !important;
+            -webkit-user-select: none !important;
+            cursor: pointer !important;
+            text-decoration: none !important;
+        }
+        button:focus, 
+        .btn:focus, 
+        input[type="submit"]:focus {
+            outline: none !important;
+        }
+    </style>
+    <script>
+        // Anti-Inspect Script
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.addEventListener('keydown', event => {
+            if (event.keyCode === 123 || 
+               (event.ctrlKey && event.shiftKey && (event.keyCode === 73 || event.keyCode === 74)) || 
+               (event.ctrlKey && event.keyCode === 85)) {
+                event.preventDefault();
+                return false;
+            }
+        });
+    </script>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top py-3">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <img src="img/smartattend_logo.svg" alt="Logo" height="35">
+                <span>Smart</span>Attend
+            </a>
+            <div>
+                <a href="index.html" class="btn" style="background: #292930; color: #fff; border-radius: 8px; padding: 8px 20px; font-weight: 600;"><i class="fas fa-home me-2"></i>Back to Home</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="about-hero">
+        <div class="container">
+            <div class="badge rounded-pill mb-3" style="background: rgba(68,129,235,0.1); color: #4481eb; padding: 8px 20px; font-weight: 600; letter-spacing: 1px;">ABOUT THE PROJECT</div>
+            <h1 class="about-title">Why We Built <span>SmartAttend</span></h1>
+            <p class="lead text-muted mx-auto" style="max-width: 700px; font-size: 1.1rem;">
+                A modern, secure, and anti-proxy online attendance system designed to replace traditional, time-consuming manual attendance tracking in colleges and universities.
+            </p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container py-5">
+        
+        <!-- Needs of the project -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <h2 class="section-title"><i class="fas fa-bullseye"></i> Need of this Project</h2>
+                <div class="feature-card">
+                    <ul class="list-unstyled mb-0 d-flex flex-column gap-3">
+                        <li class="d-flex align-items-center">
+                            <i class="fas fa-check-circle text-success me-3 fs-4"></i>
+                            <span class="fs-5 fw-semibold text-secondary">To prevent Proxy attendance</span>
+                        </li>
+                        <li class="d-flex align-items-center">
+                            <i class="fas fa-check-circle text-success me-3 fs-4"></i>
+                            <span class="fs-5 fw-semibold text-secondary">To save Time</span>
+                        </li>
+                        <li class="d-flex align-items-center">
+                            <i class="fas fa-check-circle text-success me-3 fs-4"></i>
+                            <span class="fs-5 fw-semibold text-secondary">To save papers</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advantages & Features -->
+        <div class="row mb-5 g-4">
+            <div class="col-12 mb-2">
+                <h2 class="section-title"><i class="fas fa-star"></i> Key Advantages</h2>
+            </div>
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card h-100">
+                    <div style="width: 50px; height: 50px; background: rgba(231, 76, 60, 0.1); color: #e74c3c; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 20px;">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <h5 class="fw-bold">Anti-Proxy System</h5>
+                    <p class="text-muted mb-0">Utilizes real-time OTP generation that expires in just 15 seconds. This ensures only students physically present in the class can successfully mark their attendance.</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card h-100">
+                    <div style="width: 50px; height: 50px; background: rgba(46, 204, 113, 0.1); color: #2ecc71; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 20px;">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h5 class="fw-bold">Lightning Fast</h5>
+                    <p class="text-muted mb-0">A class of 100+ students can mark their attendance simultaneously within seconds, saving valuable lecture time for actual teaching.</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card h-100">
+                    <div style="width: 50px; height: 50px; background: rgba(68, 129, 235, 0.1); color: #4481eb; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 20px;">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h5 class="fw-bold">App-Like Experience (PWA)</h5>
+                    <p class="text-muted mb-0">No Play Store required. Students and faculties can install SmartAttend directly to their home screens as a Progressive Web App.</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card h-100">
+                    <div style="width: 50px; height: 50px; background: rgba(155, 89, 182, 0.1); color: #9b59b6; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 20px;">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h5 class="fw-bold">Cloud Synced</h5>
+                    <p class="text-muted mb-0">All data is securely stored in a cloud database. Faculties can generate Excel reports and track records from anywhere, anytime.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card h-100">
+                    <div style="width: 50px; height: 50px; background: rgba(241, 196, 15, 0.1); color: #f1c40f; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 20px;">
+                        <i class="fas fa-fingerprint"></i>
+                    </div>
+                    <h5 class="fw-bold">Role-Based Access</h5>
+                    <p class="text-muted mb-0">Dedicated and highly secure dashboards for Teachers and Students with persistent login capabilities.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technologies Used -->
+        <div class="row">
+            <div class="col-12">
+                <h2 class="section-title"><i class="fas fa-code"></i> Technologies Used</h2>
+                <div class="feature-card text-center p-4 p-md-5">
+                    <div class="d-flex flex-wrap justify-content-center">
+                        <div class="tech-badge"><i class="fab fa-html5 text-danger"></i> HTML5</div>
+                        <div class="tech-badge"><i class="fab fa-css3-alt text-primary"></i> CSS3</div>
+                        <div class="tech-badge"><i class="fab fa-js text-warning"></i> JavaScript (ES6+)</div>
+                        <div class="tech-badge"><i class="fab fa-bootstrap text-purple" style="color: #7952b3;"></i> Bootstrap 5</div>
+                        <div class="tech-badge"><i class="fas fa-database text-success"></i> Supabase (PostgreSQL)</div>
+                        <div class="tech-badge"><i class="fas fa-mobile text-info"></i> PWA (Service Workers)</div>
+                        <div class="tech-badge"><i class="fas fa-file-excel text-success"></i> SheetJS (Excel Export)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <img src="img/smartattend_logo.svg" alt="Logo" height="30" style="background: white; padding: 3px; border-radius: 6px; margin-bottom: 10px;">
+            <h5 class="fw-bold mb-2">SmartAttend</h5>
+            <p class="text-white-50" style="font-size: 0.9rem;">Developed by <strong>Aman Prajapati</strong></p>
+            <div class="mt-3 d-flex justify-content-center gap-4">
+                <a href="mailto:amanjp5711@gmail.com" class="text-white-50 text-decoration-none hover-white"><i class="fas fa-envelope"></i> Contact</a>
+                <a href="https://in.linkedin.com/in/aman-prajapati-855a8a37b" target="_blank" class="text-white-50 text-decoration-none hover-white"><i class="fab fa-linkedin"></i> LinkedIn</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
+
+

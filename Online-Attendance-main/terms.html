@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SmartAttend | Terms of Service</title>
+    <link rel="icon" type="image/svg+xml" href="img/smartattend_logo.svg?v=4">
+    <meta name="theme-color" content="#4481eb">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Nunito', sans-serif; background-color: #f8fbff; color: #333; line-height: 1.6; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Montserrat', sans-serif; }
+        .navbar { background-color: #fff; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); }
+        .navbar-brand { font-family: 'Montserrat', sans-serif; font-weight: 800; color: #292930; display: flex; align-items: center; gap: 10px; }
+        .navbar-brand span { color: #4481eb; }
+        .page-hero { background: linear-gradient(135deg, rgba(68,129,235,0.05), rgba(4,190,254,0.05)); padding: 60px 0 40px; text-align: center; border-bottom: 1px solid rgba(68,129,235,0.1); }
+        .page-title { font-size: 2.2rem; font-weight: 800; color: #292930; margin-bottom: 15px; }
+        .content-card { background: #fff; border-radius: 16px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); margin-top: -30px; position: relative; z-index: 10; }
+        .content-card h4 { color: #4481eb; font-weight: 700; margin-top: 30px; margin-bottom: 15px; }
+        .footer { background-color: #1a1a24; padding: 40px 0 20px; color: #fff; text-align: center; margin-top: 60px; }
+        .hover-white { transition: color 0.2s ease; }
+        .hover-white:hover { color: #fff !important; }
+        @media (max-width: 768px) {
+            .content-card { padding: 25px; margin-top: -20px; }
+            .page-title { font-size: 1.8rem; }
+        }
+    </style>
+    <style>
+        /* Global App Button Styles */
+        button, 
+        .btn, 
+        input[type="submit"], 
+        .toggle-eye, 
+        .nav_btn, 
+        .btn_primary {
+            -webkit-tap-highlight-color: transparent !important;
+            user-select: none !important;
+            -webkit-user-select: none !important;
+            cursor: pointer !important;
+            text-decoration: none !important;
+        }
+        button:focus, 
+        .btn:focus, 
+        input[type="submit"]:focus {
+            outline: none !important;
+        }
+    </style>
+    <script>
+        // Anti-Inspect Script
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.addEventListener('keydown', event => {
+            if (event.keyCode === 123 || 
+               (event.ctrlKey && event.shiftKey && (event.keyCode === 73 || event.keyCode === 74)) || 
+               (event.ctrlKey && event.keyCode === 85)) {
+                event.preventDefault();
+                return false;
+            }
+        });
+    </script>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top py-3">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <img src="img/smartattend_logo.svg" alt="Logo" height="35">
+                <span>Smart</span>Attend
+            </a>
+            <div>
+                <a href="index.html" class="btn" style="background: #292930; color: #fff; border-radius: 8px; padding: 8px 20px; font-weight: 600;"><i class="fas fa-home me-2"></i>Home</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="page-hero">
+        <div class="container pb-4">
+            <div class="badge rounded-pill mb-3" style="background: rgba(68,129,235,0.1); color: #4481eb; padding: 8px 20px; font-weight: 600; letter-spacing: 1px;">LEGAL INFORMATION</div>
+            <h1 class="page-title">Terms of Service</h1>
+            <p class="text-muted">Effective Date: May 2026</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="content-card">
+            <p>Welcome to <strong>SmartAttend</strong>. By accessing or using our application, you agree to be bound by these Terms of Service. If you disagree with any part of the terms, then you may not access the service.</p>
+            
+            <h4>1. Use of Service</h4>
+            <p>SmartAttend is an educational tool designed for tracking class attendance. You agree to use the service only for its intended lawful purposes within your educational institution.</p>
+            <ul>
+                <li><strong>Students</strong> must not share their login credentials or attempt to mark attendance (proxy) for others.</li>
+                <li><strong>Faculties</strong> are responsible for safeguarding their accounts and generating OTPs securely in the classroom environment.</li>
+            </ul>
+
+            <h4>2. User Accounts</h4>
+            <p>When you create an account with us, you must provide information that is accurate, complete, and current at all times. Failure to do so constitutes a breach of the Terms, which may result in immediate termination of your account on our Service.</p>
+
+            <h4>3. Intellectual Property</h4>
+            <p>The Service and its original content, features, and functionality are and will remain the exclusive property of SmartAttend and its developer (Aman Prajapati). The Service is protected by copyright, trademark, and other laws.</p>
+
+            <h4>4. Limitations of Liability</h4>
+            <p>In no event shall SmartAttend, nor its developers, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of data, use, goodwill, or other intangible losses, resulting from your access to or use of or inability to access or use the Service.</p>
+
+            <h4>5. Changes</h4>
+            <p>We reserve the right, at our sole discretion, to modify or replace these Terms at any time. By continuing to access or use our Service after those revisions become effective, you agree to be bound by the revised terms.</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <img src="img/smartattend_logo.svg" alt="Logo" height="30" style="background: white; padding: 3px; border-radius: 6px; margin-bottom: 10px;">
+            <h5 class="fw-bold mb-2">SmartAttend</h5>
+            <p class="text-white-50" style="font-size: 0.9rem;">Developed by <strong>Aman Prajapati</strong></p>
+            <div class="mt-3 d-flex justify-content-center gap-4">
+                <a href="mailto:amanjp5711@gmail.com" class="text-white-50 text-decoration-none hover-white"><i class="fas fa-envelope"></i> Contact</a>
+                <a href="https://in.linkedin.com/in/aman-prajapati-855a8a37b" target="_blank" class="text-white-50 text-decoration-none hover-white"><i class="fab fa-linkedin"></i> LinkedIn</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
+
+

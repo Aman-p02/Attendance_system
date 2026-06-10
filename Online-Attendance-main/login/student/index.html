@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('SW registered', reg.scope))
+        .catch(err => console.error('SW registration failed', err));
+    });
+  }
+</script>
+    <meta name="theme-color" content="#4481eb">
+    <link rel="icon" type="image/svg+xml" href="img/smartattend_logo.svg?v=4">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="../../img/smartattend_logo.svg?v=4">
+    
+    
+    <meta charset="UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Student | Home Page</title>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background: #f0f4ff; min-height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; }
+        .dashboard { background: #fff; border-radius: 20px; box-shadow: 0 10px 40px rgba(68,129,235,0.15); padding: 40px 50px; max-width: 500px; width: 95%; text-align: center; }
+        .dash-header { font-size: 26px; font-weight: 700; color: #333; margin-bottom: 6px; }
+        .dash-sub { font-size: 13px; color: #888; margin-bottom: 30px; }
+        
+        .otp-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 24px;
+            text-align: center;
+            border: 2px solid #e0e0e0;
+            border-radius: 50px;
+            margin-bottom: 20px;
+            outline: none;
+            transition: border-color 0.3s;
+            letter-spacing: 5px;
+        }
+        .otp-input:focus { border-color: #4481eb; }
+
+        .btn-submit { background: linear-gradient(135deg, #11998e, #38ef7d); color: #fff; border: none; padding: 14px 40px; border-radius: 50px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; width: 100%; margin-bottom: 15px; }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(17,153,142,0.4); }
+        .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        .btn-logout { background: #e74c3c; color: #fff; border: none; padding: 12px 30px; border-radius: 50px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s; width: 100%; }
+        .btn-logout:hover { background: #c0392b; }
+
+        .status-container { margin-top: 20px; min-height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .status-icon { font-size: 50px; margin-bottom: 10px; display: none; }
+        .status-icon.success { color: #2ecc71; display: block; }
+        .status-icon.error { color: #e74c3c; display: block; }
+        .status-msg { font-size: 16px; font-weight: 600; }
+        .status-msg.success { color: #2ecc71; }
+        .status-msg.error { color: #e74c3c; }
+
+        .timer { font-size: 32px; font-weight: 700; color: #e74c3c; margin-bottom: 20px; }
+    </style>
+    <style>
+        /* Global App Button Styles */
+        button, 
+        .btn, 
+        input[type="submit"], 
+        .toggle-eye, 
+        .nav_btn, 
+        .btn_primary {
+            -webkit-tap-highlight-color: transparent !important;
+            user-select: none !important;
+            -webkit-user-select: none !important;
+            cursor: pointer !important;
+            text-decoration: none !important;
+        }
+        button:focus, 
+        .btn:focus, 
+        input[type="submit"]:focus {
+            outline: none !important;
+        }
+    </style>
+    <script>
+        // Anti-Inspect Script
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.addEventListener('keydown', event => {
+            if (event.keyCode === 123 || 
+               (event.ctrlKey && event.shiftKey && (event.keyCode === 73 || event.keyCode === 74)) || 
+               (event.ctrlKey && event.keyCode === 85)) {
+                event.preventDefault();
+                return false;
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="dash-header" id="welcomeMsg">Welcome, Student</div>
+        <div class="student-details" style="background: rgba(68,129,235,0.05); padding: 10px; border-radius: 10px; margin-bottom: 20px; font-size: 14px; color: #444; border: 1px solid rgba(68,129,235,0.1); text-align: center;">
+            <div style="font-weight: 600; color: #292930; margin-bottom: 4px;" id="displayStudentName">Name: -</div>
+            <div style="font-weight: 600; color: #4481eb;" id="displayRollNo">Roll No: -</div>
+        </div>
+        <div class="dash-sub">Waiting for Faculty to generate OTP...</div>
+
+        <div class="timer" id="timer" style="display: none;">00:15</div>
+
+        <form id="attendanceForm" autocomplete="off">
+            <input type="text" id="otpInput" class="otp-input" placeholder="Enter OTP" maxlength="4" required />
+            <button type="submit" class="btn-submit" id="submitBtn">Submit Attendance</button>
+        </form>
+
+        <div class="status-container">
+            <i class="fas fa-check-circle status-icon" id="successIcon"></i>
+            <i class="fas fa-times-circle status-icon" id="errorIcon"></i>
+            <div class="status-msg" id="statusMsg"></div>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #f0f0f0; margin: 25px 0;">
+
+        <button class="btn-logout" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> Log Out
+        </button>
+        <div style="margin-top: 15px; font-size: 11px; color: #ccc;">App Version: 2.0 (Auto-Updated)</div>
+        <div style="margin-top: 8px; font-size: 11px; color: #aaa;">
+            <strong>NOTE:</strong> If you face any issue or need update please contact <a href="mailto:amanjp5711@gmail.com" style="color: #4481eb; text-decoration: none; font-weight: 600;">Aman Prajapati</a>
+        </div>
+    </div>
+
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://jmnwximojkkzkitegkaf.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_k6eyinUYnJiXvyTc_ADIPA_UhueHalO';
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        const studentRollno = localStorage.getItem('studentRollno');
+        const studentName   = localStorage.getItem('studentName');
+
+        // Auth guard
+        if (!studentRollno) {
+            window.location.href = 'login.html';
+        }
+
+        const storedName = studentName || 'Student';
+        document.getElementById('welcomeMsg').textContent = 'Welcome, ' + storedName + '!';
+        
+        const nameEl = document.getElementById('displayStudentName');
+        if (nameEl) nameEl.textContent = 'Name: ' + storedName;
+        
+        const rollEl = document.getElementById('displayRollNo');
+        if (rollEl) rollEl.textContent = 'Roll No: ' + (studentRollno || '-');
+
+        let timerExpired = false; // prevents timer restart after expiry
+        let timerInterval = null;
+        let timeLeft = 15;
+        let timerStarted = false;
+        let checkInterval = null;
+        let lastMarkedOTP = '';
+        // Track the currently observed OTP in DB
+        let currentOTP = null; // Track the currently observed OTP in DB
+
+        function startTimer() {
+            // Reset expiration flag for a fresh OTP session
+            timerExpired = false;
+            if (timerStarted) return;
+            timerStarted = true;
+            timeLeft = 15; // Reset time for new OTP
+
+            document.querySelector('.dash-sub').textContent = "OTP Generated! Mark attendance quickly.";
+            document.getElementById('timer').style.display = 'block';
+            document.getElementById('submitBtn').disabled = false; // Ensure button is enabled
+
+            // Immediately show 00:15
+            document.getElementById('timer').textContent = '00:15';
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                if (timeLeft < 0) timeLeft = 0; // Prevent negative display
+                const m = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+                const s = String(timeLeft % 60).padStart(2, '0');
+                document.getElementById('timer').textContent = m + ':' + s;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timerStarted = false;
+                    timerExpired = true;
+                    lastMarkedOTP = '';
+                    // OTP expired – clear stored currentOTP so next generated OTP triggers timer
+                    currentOTP = null;
+                    document.getElementById('timer').style.display = 'none';
+                    document.querySelector('.dash-sub').textContent = "OTP Expired. Waiting for next OTP...";
+                    document.getElementById('submitBtn').disabled = false;
+                }
+            }, 1000);
+        }
+
+        // Function to poll for OTPs relevant to the student's division
+        async function listenForActiveOTP() {
+            // If timer is already running, do nothing
+            if (timerStarted) return;
+
+            // Fetch all teachers with a non-placeholder OTP
+            const { data: teachers } = await sb
+                .from('allteacher')
+                .select('otp, division, semester')
+                .neq('otp', '123');
+
+            const studentDiv = (localStorage.getItem('studentDivision') || '').trim().toUpperCase();
+            const studentSem = (localStorage.getItem('studentSemester') || '').trim();
+            let matchedOTP = null;
+            if (teachers && Array.isArray(teachers)) {
+                for (const t of teachers) {
+                    if (!t.otp) continue;
+                    const divisions = t.division ? t.division.split(/[ ,;]+/).map(d => d.trim().toUpperCase()).filter(Boolean) : [];
+                    const semester = t.semester ? t.semester.trim() : '';
+                    // Compare using loose equality after converting both to strings to handle numeric vs string values
+                    if (divisions.includes(studentDiv) && semester.toString() === studentSem.toString()) {
+                        matchedOTP = t.otp;
+                        break;
+                    }
+                }
+            }
+
+            if (matchedOTP && matchedOTP !== currentOTP && matchedOTP !== lastMarkedOTP && !timerExpired) {
+                startTimer();
+                currentOTP = matchedOTP;
+            } else if (!matchedOTP) {
+                // No OTP for this division – reset UI and clear stored OTP
+                currentOTP = null;
+                lastMarkedOTP = '';
+                timerExpired = false;
+                if (timerStarted) {
+                    clearInterval(timerInterval);
+                    timerStarted = false;
+                    document.getElementById('timer').style.display = 'none';
+                    document.querySelector('.dash-sub').textContent = "Waiting for OTP...";
+                }
+            }
+        }
+
+        // Initial fetch and start polling
+        (async () => {
+            const { data: teachers } = await sb
+                .from('allteacher')
+                .select('otp, division, semester')
+                .neq('otp', '123');
+            const studentDiv = (localStorage.getItem('studentDivision') || '').trim().toUpperCase();
+            const studentSem = (localStorage.getItem('studentSemester') || '').trim();
+            let initOTP = null;
+            if (teachers && Array.isArray(teachers)) {
+                for (const t of teachers) {
+                    if (!t.otp) continue;
+                    const divisions = t.division ? t.division.split(/[ ,;]+/).map(d => d.trim().toUpperCase()).filter(Boolean) : [];
+                    const semester = t.semester ? t.semester.trim() : '';
+                    // Use loose equality after converting to strings for numeric/string consistency
+                    if (divisions.includes(studentDiv) && semester.toString() === studentSem.toString()) {
+                        initOTP = t.otp;
+                        break;
+                    }
+                }
+            }
+            currentOTP = initOTP;
+            checkInterval = setInterval(listenForActiveOTP, 2000);
+        })();
+
+
+        function showMessage(type, message) {
+            const msgEl = document.getElementById('statusMsg');
+            const successIcon = document.getElementById('successIcon');
+            const errorIcon = document.getElementById('errorIcon');
+
+            msgEl.textContent = message;
+            msgEl.className = 'status-msg ' + type;
+
+            if (type === 'success') {
+                successIcon.classList.add('success');
+                errorIcon.classList.remove('error');
+            } else if (type === 'error') {
+                errorIcon.classList.add('error');
+                successIcon.classList.remove('success');
+            } else {
+                successIcon.classList.remove('success');
+                errorIcon.classList.remove('error');
+            }
+        }
+
+        document.getElementById('attendanceForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const otp = document.getElementById('otpInput').value.trim();
+
+            btn.disabled = true;
+            showMessage('', 'Checking...');
+
+            // 1. Find teacher with this active OTP
+            const { data: teacher, error: teacherError } = await sb
+                .from('allteacher')
+                .select('*, division, semester')
+                .eq('otp', otp)
+                .maybeSingle();
+
+            // Ensure teacher record exists
+            if (!teacher) {
+                showMessage('error', 'Invalid OTP.');
+                btn.disabled = false;
+                return;
+            }
+            // Verify that the OTP is for the student's division and semester (case‑insensitive, trimmed)
+            const studentDiv = (localStorage.getItem('studentDivision') || '').trim();
+            const studentSem = (localStorage.getItem('studentSemester') || '').trim();
+            const teacherDivisions = teacher && teacher.division ? teacher.division.split(/[ ,;]+/).map(d => d.trim().toUpperCase()).filter(Boolean) : [];
+            const teacherSemester = teacher && teacher.semester ? teacher.semester.trim() : '';
+            if (!teacherDivisions.includes(studentDiv.toUpperCase()) || teacherSemester !== studentSem) {
+                showMessage('error', 'This OTP is not for you.');
+                btn.disabled = false;
+                return;
+            }
+
+            const subjectName = teacher.teachersub || teacher.teacherSub || '';
+
+            // 2. Check if already marked for this teacher/subject on the teacher's active session date
+            const sessionDate = teacher.session_date || new Date().toISOString().split('T')[0];
+            const { data: existing, error: checkError } = await sb
+                .from('attendance')
+                .select('*')
+                .eq('teacher_username', teacher.username)
+                .eq('rollno', studentRollno)
+                .ilike('subject', subjectName) // Case-insensitive subject comparison to prevent duplicate blocks
+                .gte('created_at', sessionDate + 'T00:00:00+00:00')
+                .lte('created_at', sessionDate + 'T23:59:59+00:00')
+                .maybeSingle();
+
+            if (existing) {
+                showMessage('error', 'Attendance already marked for ' + subjectName);
+                btn.disabled = false;
+                return;
+            }
+
+            // Construct studentCreatedAt to match the teacher's selected session date at the current time
+            const nowTime = new Date().toTimeString().split(' ')[0]; // e.g. "14:30:25"
+            const studentCreatedAt = sessionDate + 'T' + nowTime + '.000Z';
+
+            // 3. Mark attendance
+            const { error: insertError } = await sb
+                .from('attendance')
+                .insert([{
+                    teacher_username: teacher.username,
+                    rollno: studentRollno,
+                    studentName: studentName,
+                    subject: subjectName,
+                    semester: studentSem,
+                    division: studentDiv,
+                    created_at: studentCreatedAt
+                }]);
+
+            if (insertError) {
+                showMessage('error', 'Failed to mark attendance.');
+                btn.disabled = false;
+            } else {
+                showMessage('success', 'Present in ' + subjectName);
+                document.getElementById('otpInput').value = '';
+                lastMarkedOTP = otp; // Prevent timer from restarting for this same OTP
+                // Stop timer on success and reset flags
+                clearInterval(timerInterval);
+                timerStarted = false;
+                timerExpired = false;
+                currentOTP = null; // allow next OTP to start timer again
+                document.getElementById('timer').style.display = 'none';
+                document.querySelector('.dash-sub').textContent = "Attendance Marked Successfully! Waiting for next...";
+                btn.disabled = false; // Re-enable for the next class
+            }
+        });
+
+        function logout() {
+            // Remove all stored student data
+            localStorage.removeItem('studentRollno');
+            localStorage.removeItem('studentName');
+            localStorage.removeItem('studentDivision');
+            // Stop any active polling or timer intervals
+            if (checkInterval) {
+                clearInterval(checkInterval);
+                checkInterval = null;
+            }
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                timerStarted = false;
+                timerExpired = false;
+                document.getElementById('timer').style.display = 'none';
+                document.querySelector('.dash-sub').textContent = "Waiting for OTP...";
+            }
+            // Redirect to login page
+            window.location.href = 'login.html';
+        }
+
+        // Network Status Resilience & Low-Bandwidth Optimizations
+        window.addEventListener('offline', () => {
+            showMessage('error', '⚠️ Network Disconnected! Please check your internet connection.');
+            const submitBtn = document.getElementById('submitBtn');
+            if (submitBtn) submitBtn.disabled = true;
+        });
+
+        window.addEventListener('online', () => {
+            showMessage('success', '⚡ Connection Restored! You are back online.');
+            const submitBtn = document.getElementById('submitBtn');
+            if (submitBtn) submitBtn.disabled = false;
+            setTimeout(() => {
+                showMessage('', '');
+                // Resume listening for OTP
+                listenForActiveOTP();
+            }, 3000);
+        });
+
+        // Optimization: Pause DB polling when tab is inactive to save mobile data and device battery
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                if (checkInterval) {
+                    clearInterval(checkInterval);
+                    checkInterval = null;
+                }
+            } else {
+                if (!checkInterval && studentRollno) {
+                    checkInterval = setInterval(listenForActiveOTP, 3000);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+
+

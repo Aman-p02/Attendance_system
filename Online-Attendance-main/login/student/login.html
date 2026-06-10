@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('SW registered', reg.scope))
+        .catch(err => console.error('SW registration failed', err));
+    });
+  }
+</script>
+    <meta name="theme-color" content="#4481eb">
+    <link rel="icon" type="image/svg+xml" href="img/smartattend_logo.svg?v=4">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="../../img/smartattend_logo.svg?v=4">
+    
+    
+    <meta charset="UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <title>Student | Sign In & Sign Up</title>
+    <style>
+        .msg { font-size: 13px; margin: 6px 0; text-align: center; }
+    .input-field { position: relative; }
+.toggle-eye {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer; color: #aaa; font-size: 15px;
+    transition: color 0.2s; z-index: 10;
+}
+.toggle-eye:hover { color: #5995fd; }
+</style>
+    <style>
+        /* Global App Button Styles */
+        button, 
+        .btn, 
+        input[type="submit"], 
+        .toggle-eye, 
+        .nav_btn, 
+        .btn_primary {
+            -webkit-tap-highlight-color: transparent !important;
+            user-select: none !important;
+            -webkit-user-select: none !important;
+            cursor: pointer !important;
+            text-decoration: none !important;
+        }
+        button:focus, 
+        .btn:focus, 
+        input[type="submit"]:focus {
+            outline: none !important;
+        }
+    </style>
+    <script>
+        // Anti-Inspect Script
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.addEventListener('keydown', event => {
+            if (event.keyCode === 123 || 
+               (event.ctrlKey && event.shiftKey && (event.keyCode === 73 || event.keyCode === 74)) || 
+               (event.ctrlKey && event.keyCode === 85)) {
+                event.preventDefault();
+                return false;
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="container" id="container">
+        <div class="forms-container">
+            <div class="signin-signup">
+
+                <!-- SIGN IN FORM -->
+                <form id="signInForm" class="sign-in-form" autocomplete="off">
+                    <h2 class="title">Sign in</h2>
+                    <div class="input-field">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="loginRollno" placeholder="Enrollment No." required />
+                    </div>
+                    <div class="input-field">
+       <i class="fas fa-lock"></i>
+       <input type="password" id="loginPassword" placeholder="Password" required />
+       <i class="fas fa-eye toggle-eye" id="toggleLoginPass"></i>
+   </div>
+                    <p class="msg" id="loginMsg"></p>
+                    <input type="submit" value="Login" class="btn solid" />
+                </form>
+
+                <!-- SIGN UP FORM -->
+                <form id="signUpForm" class="sign-up-form" autocomplete="off">
+                    <h2 class="title">Sign up</h2>
+                    <div class="input-field">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="regRollno" placeholder="Enrollment No." required pattern="\d{12}" title="Enrollment Number must be exactly 12 digits" maxlength="12" minlength="12" />
+                    </div>
+                    <div class="input-field">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="regName" placeholder="Full Name" required />
+                    </div>
+                    <div class="input-field">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="regPassword" placeholder="Create Password"
+                            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                            title="Min 8 chars, one uppercase, one lowercase, one number" required />
+                        <i class="fas fa-eye toggle-eye" id="toggleRegPass"></i>
+                    </div>
+                    <div class="input-field" style="display: flex; align-items: center;">
+                        <i class="fas fa-graduation-cap" style="margin-left: 15px; color: #acacac; font-size: 1.1rem;"></i>
+                        <select id="regSemester" required style="background: none; outline: none; border: none; font-weight: 600; font-size: 1.1rem; color: #333; width: 100%; margin-left: 10px;">
+                            <option value="" disabled selected>Select Semester</option>
+                            <option value="1">Semester 1</option>
+                            <option value="2">Semester 2</option>
+                            <option value="3">Semester 3</option>
+                            <option value="4">Semester 4</option>
+                            <option value="5">Semester 5</option>
+                            <option value="6">Semester 6</option>
+                            <option value="7">Semester 7</option>
+                            <option value="8">Semester 8</option>
+                        </select>
+                    </div>
+                    <div class="input-field" style="display: flex; align-items: center;">
+                        <i class="fas fa-users" style="margin-left: 15px; color: #acacac; font-size: 1.1rem;"></i>
+                        <select id="regDivision" required style="background: none; outline: none; border: none; font-weight: 600; font-size: 1.1rem; color: #333; width: 100%; margin-left: 10px;">
+                            <option value="" disabled selected>Select Division</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                        </select>
+                    </div>
+                    <p class="msg" id="signupMsg"></p>
+                    <input type="submit" value="Sign up" class="btn" />
+                </form>
+
+            </div>
+        </div>
+
+        <div class="panels-container">
+            <div class="panel left-panel">
+                <div class="content">
+                    <h3>New here?</h3>
+                    <p>Embark on your educational journey! Sign up with your Enrollment Number.</p>
+                    <button class="btn transparent" id="sign-up-btn">Sign up</button>
+                </div>
+                <img src="img/log.svg" class="image" alt="" />
+            </div>
+            <div class="panel right-panel">
+                <div class="content">
+                    <h3>One of us?</h3>
+                    <p>Sign in with your Enrollment Number and start marking your attendance!</p>
+                    <button class="btn transparent" id="sign-in-btn">Sign in</button>
+                </div>
+                <img src="img/register.png" class="image" alt="" />
+            </div>
+        </div>
+    </div>
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app.js"></script>
+    <script>
+        const SUPABASE_URL = 'https://jmnwximojkkzkitegkaf.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_k6eyinUYnJiXvyTc_ADIPA_UhueHalO';
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // ---- Eye Toggle ----
+        function setupEye(iconId, inputId) {
+            document.getElementById(iconId).addEventListener('click', function () {
+                const input = document.getElementById(inputId);
+                const isPass = input.type === 'password';
+                input.type = isPass ? 'text' : 'password';
+                this.classList.toggle('fa-eye', !isPass);
+                this.classList.toggle('fa-eye-slash', isPass);
+            });
+        }
+        setupEye('toggleLoginPass', 'loginPassword');
+        setupEye('toggleRegPass', 'regPassword');
+
+        // ---- SIGN IN ----
+        document.getElementById('signInForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const rollno    = document.getElementById('loginRollno').value.trim();
+            const password  = document.getElementById('loginPassword').value.trim();
+            const msgEl     = document.getElementById('loginMsg');
+
+            msgEl.style.color = '#888';
+            msgEl.textContent = 'Logging in...';
+
+            const { data, error } = await sb
+                .from('allstudent')
+                .select('rollno, studentName, division, semester')
+                .eq('rollno', rollno)
+                .eq('passwords', password)
+                .maybeSingle();
+            if (data) {
+                localStorage.setItem('studentRollno', data.rollno);
+                localStorage.setItem('studentName', data.studentName);
+                localStorage.setItem('studentDivision', data.division);
+                localStorage.setItem('studentSemester', data.semester);
+                window.location.href = 'index.html';
+            } else {
+                msgEl.style.color = 'red';
+                msgEl.textContent = 'Wrong Enrollment No. or password!';
+            }
+        });
+
+        document.getElementById('signUpForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const rollno   = document.getElementById('regRollno').value.trim();
+            const name     = document.getElementById('regName').value.trim();
+            const password = document.getElementById('regPassword').value.trim();
+            const semester = document.getElementById('regSemester').value;
+            const division = document.getElementById('regDivision').value;
+            const msgEl    = document.getElementById('signupMsg');
+
+            if (!/^\d{12}$/.test(rollno)) {
+                msgEl.style.color = 'red';
+                msgEl.textContent = 'Enrollment Number must be exactly 12 digits.';
+                return;
+            }
+
+            msgEl.style.color = '#888';
+            msgEl.textContent = 'Checking availability...';
+
+            const { data: existingUser } = await sb.from('allstudent').select('rollno').eq('rollno', rollno).maybeSingle();
+            if (existingUser) {
+                msgEl.style.color = 'red';
+                msgEl.textContent = 'Account already exists with this Enrollment No!';
+                return;
+            }
+
+            msgEl.textContent = 'Creating account...';
+
+            console.log('Attempting signup with:', { rollno, name, semester, division });
+
+            const { error } = await sb.from('allstudent').insert([{
+                rollno: rollno,
+                studentName: name,
+                studentname: name, // provide both casing options to satisfy any database setup
+                passwords: password,
+                semester: semester,
+                division: division
+            }]);
+
+            if (error) {
+                console.error('Signup error:', error);
+                msgEl.style.color = 'red';
+                msgEl.textContent = error.code === '23505'
+                    ? 'Enrollment No. already registered!'
+                    : 'Error: ' + error.message;
+            } else {
+                console.log('Signup successful!');
+                msgEl.style.color = 'green';
+                msgEl.textContent = 'Account created! You can now sign in.';
+                document.getElementById('signUpForm').reset();
+            }
+        });
+    </script>
+</body>
+</html>
+
+

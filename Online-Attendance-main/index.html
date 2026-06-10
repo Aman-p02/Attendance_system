@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('SW registered', reg.scope))
+                    .catch(err => console.error('SW registration failed', err));
+            });
+        }
+
+        // Update links to point to dashboard if already logged in
+        window.addEventListener('DOMContentLoaded', () => {
+            const isStudentLoggedIn = localStorage.getItem('studentRollno');
+            const isTeacherLoggedIn = localStorage.getItem('teacherUsername');
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+            if (isStudentLoggedIn || isTeacherLoggedIn) {
+                const dashboardUrl = isStudentLoggedIn ? 'login/student/index.html' : 'login/teacher/index.html';
+
+                // If opening as an installed App on phone, directly jump to Dashboard
+                if (isStandalone) {
+                    window.location.replace(dashboardUrl);
+                } else {
+                    // If in browser, just update the buttons
+                    document.querySelectorAll('a[href="login/login.html"], button[data-href="login/login.html"]').forEach(link => {
+                        if (link.tagName === 'A') {
+                            link.href = dashboardUrl;
+                        } else {
+                            link.setAttribute('onclick', `window.location.href='${dashboardUrl}'`);
+                        }
+                        if (link.textContent.includes('Get Started')) {
+                            link.innerHTML = link.innerHTML.replace('Get Started', 'Dashboard');
+                        }
+                    });
+
+                    // Also update the hero button
+                    const heroBtnLink = document.getElementById('heroLoginBtnLink');
+                    if (heroBtnLink) {
+                        heroBtnLink.setAttribute('onclick', `window.location.href='${dashboardUrl}'`);
+                    }
+                    const heroBtn = document.querySelector('.btn_primary');
+                    if (heroBtn && heroBtn.textContent.includes('Login Now')) {
+                        heroBtn.textContent = 'Dashboard';
+                    }
+                }
+            }
+        });
+    </script>
+    <meta name="theme-color" content="#4481eb">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="img/smartattend_logo.svg?v=4">
+
+
+    <!-- Google tag (gtag.js) -->
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZDX77S8XN1"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;0,1000;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900;1,1000&display=swap"
+        rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+
+
+
+    <!-- Meta Business Page tag -->
+    <meta name="facebook-domain-verification" content="iq03rnf18n5c9ybnwx978quornljaj" />
+    <!-- Meta Business Page tag -->
+    <meta charset="UTF-8">
+    <meta name="robots" content="index, follow, noodp" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SmartAttend | Home</title>
+
+    <!-- Swiper-JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+    <!-- Font-Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Bootstrap-CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <!-- Custom-CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css" media="all">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+
+    <!-- favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+
+
+    <link rel="manifest" href="img/site.webmanifest">
+
+    <style>
+        /* Global App Button Styles */
+        button, 
+        .btn, 
+        input[type="submit"], 
+        .toggle-eye, 
+        .nav_btn, 
+        .btn_primary {
+            -webkit-tap-highlight-color: transparent !important;
+            user-select: none !important;
+            -webkit-user-select: none !important;
+            cursor: pointer !important;
+            text-decoration: none !important;
+        }
+        button:focus, 
+        .btn:focus, 
+        input[type="submit"]:focus {
+            outline: none !important;
+        }
+    </style>
+    <script>
+        // Anti-Inspect Script
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.addEventListener('keydown', event => {
+            if (event.keyCode === 123 || 
+               (event.ctrlKey && event.shiftKey && (event.keyCode === 73 || event.keyCode === 74)) || 
+               (event.ctrlKey && event.keyCode === 85)) {
+                event.preventDefault();
+                return false;
+            }
+        });
+    </script>
+</head>
+
+<body>
+    <script>
+        document.addEventListener('contextmenu', event => event.preventDefault());
+    </script>
+    <!-- Fixed Area -->
+    <div class="fixedArea">
+
+
+        <!-- Navbar -->
+        <nav id="mynav" class="navbar navbar-expand-md py-3 overflow-hidden">
+
+            <div class="container-lg px-4 h-100">
+                <a class="navbar-brand site_logo grow d-flex align-items-center gap-2" href="#">
+                    <img src="img/smartattend_logo.svg" alt="SmartAttend Logo" style="height: 40px; width: auto;">
+                    <span
+                        style="font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 24px; color: #292930;">SmartAttend</span>
+                </a>
+                <button class="navbar-toggler border-0 shadow-none" id="ham_icon" type="button"
+                    data-bs-toggle="offcanvas" data-bs-target="#offcanvas">
+                    <img src="./img/ham_menu.png" alt="menu" style="width: 2rem; height: 2rem;" />
+                </button>
+                <div class="offcanvas offcanvas-start half_drawer" id="offcanvas" style="z-index: 1000;">
+                    <div class="p-3 mb-5 d-flex justify-content-end d-md-none d-block">
+                        <button class="bg-transparent border-0 shadow-none" type="button" data-bs-dismiss="offcanvas"
+                            aria-label="Close"><img src="./img/ham_open.png" alt="close"
+                                style="width: 2rem; height: 2rem;" /></button>
+                    </div>
+                    <ul class="navbar-nav nav_ul ms-md-auto d-none d-md-flex">
+                        <li class="nav-item">
+                            <div class="d-flex justify-content-end"
+                                style="position:fixed;z-index:1000;top: 3.5rem; width: 100%; ">
+
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" id="drop_down">
+                                </ul>
+                            </div>
+
+                        </li>
+
+
+                        <li class="nav-item">
+                            <a class="nav-link nav_btn text-center" href="login/login.html"
+                                style="background-color: #292930; border-radius: 7px; color: #FFF; font-size: 14px; cursor: pointer;">
+                                Get Started
+                            </a>
+                        </li>
+
+                    </ul>
+                    <ul class=" navbar-nav nav_ul ms-md-auto d-block d-md-none">
+                        <li class="nav-item d-flex align-items-end py-2">
+                            <a href="login/login.html"
+                                style="background-color: #292930; color: #FFF !important; text-align: right; text-decoration: none; font-size: 1rem; cursor: pointer;">
+                                Get Started
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+
+            </div>
+            <div id="static-navbar" class="h-100" style="display: none; position: absolute; min-width: 40%;right: 0 ; border-radius: 29px 0px 0px 29px;
+        background-color:#FFF ; z-index: 1;">
+
+            </div>
+        </nav>
+    </div>
+
+    <!-- Site-Header -->
+    <header id="site_header" style="padding-top: 120px;">
+
+        <div class="site_hero" style="background-image: url('/img/hero_bg_mobile2.png');">
+            <div class="container-lg pl-4 py-5">
+                <div class="row  justify-content-between py-0 py-md-5">
+                    <div class="col-md-7 mb-md-0 mb-4 py-0 py-md-5 "">
+                        <!-- <img width=" 95" class="mb-3" src="img/doodle.png" alt="" data-aos="zoom-in"> -->
+                        <div class="d-flex flex-column align-items-center align-items-md-start text-center ">
+
+                            <!-- <div class="mb-3 small-heading"><span class="typography"
+                                    style="font-size: 15px;">//</span>COURSES
+                            </div> -->
+                            <h1 class=" fw-bold mb-4 display-5 text-md-start ">
+                                <span style="color: #4481eb;">Smart</span>Attend<br>is Here..
+                            </h1>
+                            <p class=" mb-4 text-center ">To open online attendance for students to mark their presence
+                                remotely.</p>
+                            <div
+                                class="d-flex flex-column flex-md-row align-items-center align-items-md-start gap-3 mt-3 mt-md-0">
+                                <button id="heroLoginBtnLink" class="btn_primary btn_arrow"
+                                    style="background-color: #292930; color: #FFF !important;"
+                                    onclick="window.location.href='login/login.html'">
+                                    Login Now</button>
+                                <button id="installAppBtn" class="btn_primary btn_arrow"
+                                    style="background-color: #292930; color: #FFF !important;">
+                                    <i class="fas fa-download" style="margin-right: 8px;"></i> Install App
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5 d-flex h-100 pop-in-element">
+                        <div class="top-0 grow">
+                            <img class="img-fluid" src="img/hero-img.png" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Meet the Developer Section -->
+    <section class="py-5 position-relative overflow-hidden"
+        style="background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);">
+        <!-- Decorative Background Elements -->
+        <div class="position-absolute rounded-circle"
+            style="width: 300px; height: 300px; background: rgba(68,129,235,0.08); top: -50px; left: -100px; filter: blur(40px);">
+        </div>
+        <div class="position-absolute rounded-circle"
+            style="width: 400px; height: 400px; background: rgba(4,190,254,0.08); bottom: -150px; right: -100px; filter: blur(50px);">
+        </div>
+
+        <div class="container-lg px-4 position-relative" style="z-index:1;">
+
+            <!-- Developer Header -->
+            <div class="text-center mb-4" data-aos="fade-up">
+                <span class="badge rounded-pill px-4 py-2 mb-3"
+                    style="background: linear-gradient(135deg, #4481eb 0%, #04befe 100%); color: white; font-weight: 700; letter-spacing: 1.5px; font-size: 12px;">THE
+                    DEVELOPER</span>
+                <h2 class="display-5 fw-bold mb-4" style="color: #292930;">About the Developer</h2>
+            </div>
+
+            <!-- Developer Card -->
+            <div class="d-flex justify-content-center mb-5" data-aos="zoom-in" data-aos-delay="80">
+                <div class="position-relative" style="max-width: 340px; width: 100%;">
+                    <!-- Glow effect behind card -->
+                    <div class="position-absolute"
+                        style="inset: -3px; background: linear-gradient(135deg, #4481eb, #04befe, #4481eb); border-radius: 24px; filter: blur(8px); opacity: 0.5; z-index: 0;">
+                    </div>
+                    <div class="position-relative rounded-4 p-4 text-center dev-card"
+                        style="background: rgba(255,255,255,0.95); backdrop-filter: blur(12px); box-shadow: 0 20px 60px rgba(68,129,235,0.18); border: 1.5px solid rgba(68,129,235,0.15); z-index: 1;">
+                        <!-- Avatar Circle -->
+                        <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 avatar-ring"
+                            style="width:80px;height:80px;background:linear-gradient(135deg,#4481eb 0%,#04befe 100%);font-size:28px;font-weight:800;color:#fff;font-family:'Montserrat',sans-serif;box-shadow:0 8px 24px rgba(68,129,235,0.35);">
+                            AP</div>
+                        <!-- Name -->
+                        <h4 class="fw-bold mb-1"
+                            style="color:#292930;font-family:'Montserrat',sans-serif;font-size:1.3rem;">Aman Prajapati
+                        </h4>
+                        <!-- Role badge -->
+                        <span class="badge rounded-pill px-3 py-1 mb-3 d-inline-block"
+                            style="background:linear-gradient(135deg,rgba(68,129,235,0.12),rgba(4,190,254,0.12));color:#4481eb;font-size:11px;font-weight:600;letter-spacing:0.8px;border:1px solid rgba(68,129,235,0.2);">Connect
+                            with Developer</span>
+                        <!-- Divider -->
+                        <div class="mb-3"
+                            style="height:1px;background:linear-gradient(90deg,transparent,rgba(68,129,235,0.25),transparent);">
+                        </div>
+                        <!-- Social Icons -->
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="https://in.linkedin.com/in/aman-prajapati-855a8a37b" target="_blank"
+                                rel="noopener noreferrer" title="LinkedIn - Aman Prajapati"
+                                class="social-btn-dev d-inline-flex align-items-center justify-content-center rounded-circle text-white"
+                                style="width:44px;height:44px;background:linear-gradient(135deg,#0077b5,#00a0dc);box-shadow:0 4px 14px rgba(0,119,181,0.35);transition:all 0.3s;text-decoration:none;">
+                                <i class="fab fa-linkedin-in fs-5"></i>
+                            </a>
+                            <a href="mailto:amanjp5711@gmail.com" title="Email - amanjp5711@gmail.com"
+                                class="social-btn-dev d-inline-flex align-items-center justify-content-center rounded-circle text-white"
+                                style="width:44px;height:44px;background:linear-gradient(135deg,#ea4335,#fbbc04);box-shadow:0 4px 14px rgba(234,67,53,0.35);transition:all 0.3s;text-decoration:none;">
+                                <i class="fas fa-envelope fs-5"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <style>
+                .dev-card {
+                    transition: transform 0.35s ease, box-shadow 0.35s ease;
+                }
+
+                .dev-card:hover {
+                    transform: translateY(-8px);
+                    box-shadow: 0 28px 70px rgba(68, 129, 235, 0.22) !important;
+                }
+
+                .social-btn-dev:hover {
+                    transform: translateY(-4px) scale(1.12);
+                    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25) !important;
+                }
+
+                .avatar-ring {
+                    animation: devPulse 3s infinite;
+                }
+
+                @keyframes devPulse {
+
+                    0%,
+                    100% {
+                        box-shadow: 0 8px 24px rgba(68, 129, 235, 0.35);
+                    }
+
+                    50% {
+                        box-shadow: 0 8px 32px rgba(4, 190, 254, 0.55);
+                    }
+                }
+            </style>
+
+            <!-- Add to Home Screen Steps -->
+            <div id="installInstructionsSection">
+                <div class="text-center mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <h4 class="fw-bold mb-1" style="color: #292930;">Add SmartAttend to Your Home Screen</h4>
+                    <p class="text-muted" style="font-size: 0.95rem;">Install SmartAttend like an app no Play Store
+                        needed!</p>
+                </div>
+
+                <!-- Missing Install Warning Banner -->
+                <div class="alert mx-auto text-start mb-4" style="max-width: 800px; font-size: 14px; border-left: 4px solid #f39c12; background-color: #fff3e0; color: #d35400;" data-aos="fade-up" data-aos-delay="120">
+                    <div class="fw-bold mb-1"><i class="fas fa-exclamation-triangle me-2"></i> "Add to Home Screen" option missing?</div>
+                    <ul class="mb-0 ps-3" style="font-size: 13.5px;">
+                        <li class="mb-1"><strong>WhatsApp / Instagram Users:</strong> You cannot install the app if you opened it by clicking a link in chat. Click the 3 dots and select <strong>"Open in Chrome"</strong> first.</li>
+                        <li><strong>Redmi / Xiaomi Users:</strong> Your phone blocks Chrome from making shortcuts by default. Go to Phone <strong>Settings &rarr; Apps &rarr; Chrome &rarr; Permissions</strong> and allow <strong>"Home Screen Shortcuts"</strong>.</li>
+                    </ul>
+                </div>
+
+                <div class="row justify-content-center g-3" data-aos="fade-up" data-aos-delay="150">
+
+                    <!-- Step 1 -->
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="h-100 rounded-4 p-4 text-center"
+                            style="background:#fff; box-shadow: 0 4px 24px rgba(68,129,235,0.10); border: 1.5px solid rgba(68,129,235,0.12); transition: transform 0.3s;"
+                            onmouseover="this.style.transform='translateY(-6px)'"
+                            onmouseout="this.style.transform='translateY(0)'">
+                            <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                                style="width:56px;height:56px;background:linear-gradient(135deg,#4481eb,#04befe);">
+                                <i class="fab fa-chrome text-white fs-5"></i>
+                            </div>
+                            <div class="fw-bold mb-1" style="color:#4481eb;font-size:12px;letter-spacing:1px;">STEP 1
+                            </div>
+                            <div class="fw-semibold mb-1" style="color:#292930;font-size:15px;">Open in Chrome</div>
+                            <p class="text-muted mb-0" style="font-size:13px;">Open this website in Chrome or any
+                                Chromium-based browser on your Android phone.</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="h-100 rounded-4 p-4 text-center"
+                            style="background:#fff; box-shadow: 0 4px 24px rgba(68,129,235,0.10); border: 1.5px solid rgba(68,129,235,0.12); transition: transform 0.3s;"
+                            onmouseover="this.style.transform='translateY(-6px)'"
+                            onmouseout="this.style.transform='translateY(0)'">
+                            <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                                style="width:56px;height:56px;background:linear-gradient(135deg,#4481eb,#04befe);">
+                                <i class="fas fa-ellipsis-v text-white fs-5"></i>
+                            </div>
+                            <div class="fw-bold mb-1" style="color:#4481eb;font-size:12px;letter-spacing:1px;">STEP 2
+                            </div>
+                            <div class="fw-semibold mb-1" style="color:#292930;font-size:15px;">Tap Menu (⋮)</div>
+                            <p class="text-muted mb-0" style="font-size:13px;">Tap the three-dot menu button at the
+                                top-right corner of your browser.</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="h-100 rounded-4 p-4 text-center"
+                            style="background:#fff; box-shadow: 0 4px 24px rgba(68,129,235,0.10); border: 1.5px solid rgba(68,129,235,0.12); transition: transform 0.3s;"
+                            onmouseover="this.style.transform='translateY(-6px)'"
+                            onmouseout="this.style.transform='translateY(0)'">
+                            <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                                style="width:56px;height:56px;background:linear-gradient(135deg,#4481eb,#04befe);">
+                                <i class="fas fa-plus text-white fs-5"></i>
+                            </div>
+                            <div class="fw-bold mb-1" style="color:#4481eb;font-size:12px;letter-spacing:1px;">STEP 3
+                            </div>
+                            <div class="fw-semibold mb-1" style="color:#292930;font-size:15px;">Add to Home Screen</div>
+                            <p class="text-muted mb-0" style="font-size:13px;">Select "Add to Home screen" from the
+                                dropdown
+                                menu that appears.</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="h-100 rounded-4 p-4 text-center"
+                            style="background:#fff; box-shadow: 0 4px 24px rgba(68,129,235,0.10); border: 1.5px solid rgba(68,129,235,0.12); transition: transform 0.3s;"
+                            onmouseover="this.style.transform='translateY(-6px)'"
+                            onmouseout="this.style.transform='translateY(0)'">
+                            <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                                style="width:56px;height:56px;background:linear-gradient(135deg,#4481eb,#04befe);">
+                                <i class="fas fa-check text-white fs-5"></i>
+                            </div>
+                            <div class="fw-bold mb-1" style="color:#4481eb;font-size:12px;letter-spacing:1px;">STEP 4
+                            </div>
+                            <div class="fw-semibold mb-1" style="color:#292930;font-size:15px;">Confirm &amp; Done!
+                            </div>
+                            <p class="text-muted mb-0" style="font-size:13px;">Confirm the name "SmartAttend" and tap
+                                Add.
+                                The app icon will appear on your home screen!</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- End Add to Home Screen Steps -->
+
+            <!-- Instructions Steps -->
+            <div id="instructionsSection" style="display: none;">
+                <div class="text-center mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <h4 class="fw-bold mb-1" style="color: #292930;">How to Signup &amp; Login</h4>
+                    <p class="text-muted" style="font-size: 0.95rem;">Follow these simple steps to get started with
+                        SmartAttend.</p>
+                </div>
+
+                <div class="row justify-content-center g-3" data-aos="fade-up" data-aos-delay="150">
+
+                    <!-- Step 1 -->
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="h-100 rounded-4 p-4 text-center"
+                            style="background:#fff; box-shadow: 0 4px 24px rgba(68,129,235,0.10); border: 1.5px solid rgba(68,129,235,0.12); transition: transform 0.3s;"
+                            onmouseover="this.style.transform='translateY(-6px)'"
+                            onmouseout="this.style.transform='translateY(0)'">
+                            <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                                style="width:56px;height:56px;background:linear-gradient(135deg,#4481eb,#04befe);">
+                                <i class="fas fa-mouse-pointer text-white fs-5"></i>
+                            </div>
+                            <div class="fw-bold mb-1" style="color:#4481eb;font-size:12px;letter-spacing:1px;">STEP 1
+                            </div>
+                            <div class="fw-semibold mb-1" style="color:#292930;font-size:15px;">Choose Role</div>
+                            <p class="text-muted mb-0" style="font-size:13px;">Click on "Login Now" and choose whether
+                                you are a Student or a Teacher.</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="h-100 rounded-4 p-4 text-center"
+                            style="background:#fff; box-shadow: 0 4px 24px rgba(68,129,235,0.10); border: 1.5px solid rgba(68,129,235,0.12); transition: transform 0.3s;"
+                            onmouseover="this.style.transform='translateY(-6px)'"
+                            onmouseout="this.style.transform='translateY(0)'">
+                            <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                                style="width:56px;height:56px;background:linear-gradient(135deg,#4481eb,#04befe);">
+                                <i class="fas fa-user-plus text-white fs-5"></i>
+                            </div>
+                            <div class="fw-bold mb-1" style="color:#4481eb;font-size:12px;letter-spacing:1px;">STEP 2
+                            </div>
+                            <div class="fw-semibold mb-1" style="color:#292930;font-size:15px;">Go to Sign Up</div>
+                            <p class="text-muted mb-0" style="font-size:13px;">If you are a new user, click on the "Sign
+                                Up" link at the bottom of the login page.</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="h-100 rounded-4 p-4 text-center"
+                            style="background:#fff; box-shadow: 0 4px 24px rgba(68,129,235,0.10); border: 1.5px solid rgba(68,129,235,0.12); transition: transform 0.3s;"
+                            onmouseover="this.style.transform='translateY(-6px)'"
+                            onmouseout="this.style.transform='translateY(0)'">
+                            <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                                style="width:56px;height:56px;background:linear-gradient(135deg,#4481eb,#04befe);">
+                                <i class="fas fa-address-card text-white fs-5"></i>
+                            </div>
+                            <div class="fw-bold mb-1" style="color:#4481eb;font-size:12px;letter-spacing:1px;">STEP 3
+                            </div>
+                            <div class="fw-semibold mb-1" style="color:#292930;font-size:15px;">Register Details</div>
+                            <p class="text-muted mb-0" style="font-size:13px;">Fill in your details properly (like Roll
+                                No, Division, Semester) and create your account.</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="h-100 rounded-4 p-4 text-center"
+                            style="background:#fff; box-shadow: 0 4px 24px rgba(68,129,235,0.10); border: 1.5px solid rgba(68,129,235,0.12); transition: transform 0.3s;"
+                            onmouseover="this.style.transform='translateY(-6px)'"
+                            onmouseout="this.style.transform='translateY(0)'">
+                            <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                                style="width:56px;height:56px;background:linear-gradient(135deg,#4481eb,#04befe);">
+                                <i class="fas fa-sign-in-alt text-white fs-5"></i>
+                            </div>
+                            <div class="fw-bold mb-1" style="color:#4481eb;font-size:12px;letter-spacing:1px;">STEP 4
+                            </div>
+                            <div class="fw-semibold mb-1" style="color:#292930;font-size:15px;">Login &amp; Use</div>
+                            <p class="text-muted mb-0" style="font-size:13px;">Return to the login page, enter your new
+                                credentials, and start marking attendance!</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- End Instructions Steps -->
+
+        </div>
+    </section>
+
+
+
+
+
+
+
+
+
+    <!-- site-footer -->
+    <footer id="site_footer"
+        style="background: #1a1a24; position: relative; overflow: hidden; padding-top: 80px; padding-bottom: 20px;">
+
+        <div class="container-lg px-4 position-relative text-white" style="z-index:1;">
+            <div class="row mb-5 justify-content-between">
+
+                <!-- Brand -->
+                <div class="col-12 col-md-4 mb-4 mb-md-0">
+                    <div class="d-flex align-items-center gap-2 mb-4">
+                        <img src="img/smartattend_logo.svg" alt="SmartAttend"
+                            style="height: 40px; background: white; padding: 5px; border-radius: 8px;">
+                        <span
+                            style="font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 24px;">SmartAttend</span>
+                    </div>
+                    <p style="color: #a0a0a0; font-size: 15px; line-height: 1.8; max-width: 300px;">
+                        Revolutionizing attendance tracking with a seamless, modern, and highly secure online platform.
+                        Make manual attendance a thing of the past.
+                    </p>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="col-6 col-md-2 mb-4 mb-md-0">
+                    <h5 class="fw-bold mb-4" style="color: #fff;">Quick Links</h5>
+                    <ul class="list-unstyled d-flex flex-column gap-2" style="font-size: 15px;">
+                        <li><a href="#" class="text-decoration-none footer-link">Home</a></li>
+                        <li><a href="login/login.html" class="text-decoration-none footer-link">Teacher Login</a></li>
+                        <li><a href="login/login.html" class="text-decoration-none footer-link">Student Login</a></li>
+                        <li><a href="about.html" class="text-decoration-none footer-link">About Project</a></li>
+                    </ul>
+                </div>
+
+                <!-- Legal -->
+                <div class="col-6 col-md-2 mb-4 mb-md-0">
+                    <h5 class="fw-bold mb-4" style="color: #fff;">Legal</h5>
+                    <ul class="list-unstyled d-flex flex-column gap-2" style="font-size: 15px;">
+                        <li><a href="privacy.html" class="text-decoration-none footer-link">Privacy Policy</a></li>
+                        <li><a href="terms.html" class="text-decoration-none footer-link">Terms of Service</a></li>
+                        <li><a href="#" class="text-decoration-none footer-link">Cookie Policy</a></li>
+                    </ul>
+                </div>
+
+                <!-- Stay Updated -->
+                <div class="col-12 col-md-3">
+                    <h5 class="fw-bold mb-4" style="color: #fff;">Stay Updated</h5>
+                    <p style="color: #a0a0a0; font-size: 14px;">Subscribe to our newsletter for the latest updates and
+                        features.</p>
+                    <div class="input-group mb-3">
+                        <input type="email" class="form-control border-0 shadow-none" placeholder="Email Address"
+                            style="background: #2a2a36; color: white;">
+                        <button class="btn px-3" type="button"
+                            style="background: linear-gradient(135deg, #4481eb 0%, #04befe 100%); border: none;">
+                            <i class="fas fa-paper-plane text-white"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Footer Bottom Bar -->
+            <div class="border-top pt-4 mt-2 d-flex flex-column flex-md-row justify-content-between align-items-center gap-3"
+                style="border-color: #333 !important;">
+                <p class="m-0 text-center text-md-start" style="color: #a0a0a0; font-size: 14px;">
+                    &copy; 2026 SmartAttend. All rights reserved. Designed by <strong style="color:#04befe;">Aman
+                        Prajapati</strong>
+                </p>
+                <div class="d-flex gap-3">
+                    <a href="#" class="text-white opacity-75" style="transition: opacity 0.3s;"
+                        onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.75" title="Email">
+                        <i class="fas fa-envelope fs-5"></i>
+                    </a>
+                    <a href="#" class="text-white opacity-75" style="transition: opacity 0.3s;"
+                        onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.75" title="GitHub">
+                        <i class="fab fa-github fs-5"></i>
+                    </a>
+                    <a href="#" class="text-white opacity-75" style="transition: opacity 0.3s;"
+                        onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.75" title="LinkedIn">
+                        <i class="fab fa-linkedin fs-5"></i>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <style>
+            .footer-link {
+                color: #a0a0a0;
+                transition: all 0.3s ease;
+            }
+
+            .footer-link:hover {
+                color: #04befe;
+                padding-left: 5px;
+            }
+        </style>
+    </footer>
+
+    <!-- Swiper-JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+    <!-- Boostrap-JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
+    <!-- Custom-JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script src="js/app.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const myNav = document.getElementById('mynav');
+            const navBg = document.getElementById('static-navbar');
+            window.onscroll = function () {
+                if (document.body.scrollTop >= 40 || document.documentElement.scrollTop >= 40) {
+                    myNav.classList.add("nav-colored");
+                    myNav.classList.remove("nav-transparent");
+                    if (window.innerWidth > 768)
+                        navBg.style.display = 'inline'
+                }
+                else {
+                    myNav.classList.add("nav-transparent");
+                    myNav.classList.remove("nav-colored");
+                    if (window.innerWidth > 768)
+                        navBg.style.display = 'none'
+                }
+            };
+        });
+
+        function scrollToBestPlan() {
+            if (window.innerWidth > 768) {
+                const element = document.getElementById("plans");
+                element.scrollIntoView(false);
+            }
+            else {
+                const element2 = document.getElementById("bestplan");
+                element2.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' })
+            }
+
+        }
+
+        const handleShowContent = (buttonNumber, clickedButton) => {
+            var contentDivs = document.getElementsByClassName("content");
+            var buttons = document.getElementsByClassName("toggle_button");
+
+            // Hide all content divs
+            for (var i = 0; i < contentDivs.length; i++) {
+                contentDivs[i].style.display = "none";
+            }
+
+            // Remove 'course_active_button' class from all buttons
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove("course_active_button");
+            }
+
+            // Show the content div corresponding to the clicked button
+            var contentId = "content" + buttonNumber;
+            var content = document.getElementById(contentId);
+            content.style.display = "block";
+
+            // Add 'course_active_button' class to the clicked button
+            clickedButton.classList.add("course_active_button");
+        }
+
+        const drop_down = document.getElementById('drop_down')
+
+        dropDownData.map((item) => {
+            const singleLi = document.createElement('li')
+            singleLi.style.marginRight = '0px'
+            singleLi.classList.add('nav-link')
+            singleLi.innerHTML = `
+            <a class="dropdown-item dropDown_styles d-flex gap-2 align-items-center" href=${item.hyperLink} style='background: ${item.lg}'>
+                <div><img src=${item.icon} alt='icon'/></div>
+                
+                <div class="d-flex flex-column justify-content-center">
+                <span class='fw-bold text-black'>${item.name}</span>
+                <p class="text-black p-0 m-0" style="font-size: 12px;">${item.msg}</p>
+            </div>
+            </a>`
+            drop_down.appendChild(singleLi)
+
+        })
+        document.addEventListener("DOMContentLoaded", function () {
+            const elementToAnimate = document.querySelector(".pop-in-element");
+            elementToAnimate.classList.add("pop-in");
+        });
+
+
+    </script>
+
+
+    <script>
+        // Custom Install App Button Logic
+        let deferredPrompt;
+        const installBtn = document.getElementById('installAppBtn');
+
+        // Check if device is iOS
+        const isIos = () => {
+            const userAgent = window.navigator.userAgent.toLowerCase();
+            return /iphone|ipad|ipod/.test(userAgent);
+        };
+        // Check if already in standalone mode
+        const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone) || window.matchMedia('(display-mode: standalone)').matches;
+
+        // For Android/Desktop: Listen for the beforeinstallprompt event
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent Chrome 67 and earlier from automatically showing the prompt
+            e.preventDefault();
+            // Stash the event so it can be triggered later
+            deferredPrompt = e;
+            // Update UI to notify the user they can add to home screen
+            if (installBtn && !isInStandaloneMode()) {
+                installBtn.style.display = 'inline-block';
+            }
+        });
+
+        // Handle install button click for Android/Desktop
+        if (installBtn) {
+            installBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    // Show the install prompt
+                    deferredPrompt.prompt();
+                    // Wait for the user to respond to the prompt
+                    const { outcome } = await deferredPrompt.userChoice;
+                    // Clear the deferredPrompt so it can only be used once
+                    deferredPrompt = null;
+                    // Hide the button if accepted
+                    if (outcome === 'accepted') {
+                        installBtn.style.display = 'none';
+                    }
+                } else if (isIos() && !isInStandaloneMode()) {
+                    // Custom instruction for iOS users
+                    alert("To install this app on your iPhone:\n\n1. Tap the 'Share' icon at the bottom of Safari.\n2. Scroll down and tap 'Add to Home Screen'.");
+                } else if (!isInStandaloneMode()) {
+                    // Scroll to manual instructions if prompt not ready
+                    const instrInstall = document.getElementById('installInstructionsSection');
+                    if(instrInstall) {
+                        instrInstall.scrollIntoView({ behavior: 'smooth' });
+                    } else {
+                        alert("Please click the 3 dots in your browser menu and select 'Add to Home Screen' or 'Install App'.");
+                    }
+                }
+            });
+        }
+
+        // Show button for iOS automatically since they don't fire beforeinstallprompt
+        if (isIos() && !isInStandaloneMode() && installBtn) {
+            installBtn.style.display = 'inline-block';
+            installBtn.innerHTML = '<i class="fab fa-apple" style="margin-right: 8px;"></i> Install on iPhone';
+        }
+
+        // Toggle instructions based on app mode
+        const instrSignup = document.getElementById('instructionsSection');
+        const instrInstall = document.getElementById('installInstructionsSection');
+
+        if (isInStandaloneMode()) {
+            if (instrInstall) instrInstall.style.display = 'none';
+            if (instrSignup) instrSignup.style.display = 'block';
+        } else {
+            if (instrInstall) instrInstall.style.display = 'block';
+            if (instrSignup) instrSignup.style.display = 'none';
+        }
+
+        // Handle successful installation
+        window.addEventListener('appinstalled', () => {
+            if (installBtn) installBtn.style.display = 'none';
+            if (instrInstall) instrInstall.style.display = 'none';
+            if (instrSignup) instrSignup.style.display = 'block';
+            deferredPrompt = null;
+        });
+
+        // In-App Browser detection to show user-friendly warning toast
+        const isInAppBrowser = () => {
+            const ua = navigator.userAgent || navigator.vendor || window.opera;
+            return (
+                /FBAN|FBAV|Instagram|WhatsApp|LinkedInApp/i.test(ua) ||
+                ( /Android/i.test(ua) && /wv/i.test(ua) ) || 
+                ( /iPhone|iPad|iPod/i.test(ua) && !/Safari/i.test(ua) && !/GSA/i.test(ua) && !/Chrome/i.test(ua) )
+            );
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const ua = navigator.userAgent || navigator.vendor || window.opera;
+            const isAndroid = /Android/i.test(ua);
+            
+            if (isInAppBrowser()) {
+                if (isAndroid) {
+                    // Force open in Google Chrome directly on Android
+                    const chromeIntent = `intent://${window.location.host}${window.location.pathname}${window.location.search}#Intent;scheme=https;package=com.android.chrome;end`;
+                    window.location.href = chromeIntent;
+                } else {
+                    // For iOS, show the beautiful custom toast since Apple doesn't allow forcing Safari programmatically
+                    const toastEl = document.getElementById('inAppBrowserToast');
+                    if (toastEl) {
+                        toastEl.style.display = 'block';
+                    }
+                }
+            }
+        });
+    </script>
+
+    <!-- In-App Browser Warning Toast -->
+    <div id="inAppBrowserToast" class="position-fixed border-0 shadow-lg rounded-4 p-4" 
+         style="display: none; bottom: 24px; left: 50%; transform: translateX(-50%); max-width: 90%; width: 450px; z-index: 10005; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 1.5px solid rgba(243, 156, 18, 0.3) !important; box-shadow: 0 15px 40px rgba(0,0,0,0.15) !important;">
+        <div class="d-flex align-items-start gap-3">
+            <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" 
+                 style="width: 48px; height: 48px; background: linear-gradient(135deg, #f39c12 0%, #d35400 100%); color: white; font-size: 20px;">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="flex-grow-1">
+                <h6 class="fw-bold mb-1" style="color: #292930; font-family: 'Montserrat', sans-serif; font-size: 15px;">WhatsApp / Instagram User?</h6>
+                <p class="mb-0 text-muted" style="font-size: 13px; line-height: 1.5;">
+                    To install this app on your phone, tap the <strong>three dots (⋮)</strong> or <strong>Share icon</strong> at the top-right and select <strong>"Open in Chrome"</strong> or <strong>"Open in Safari"</strong>.
+                </p>
+            </div>
+            <button onclick="document.getElementById('inAppBrowserToast').style.display='none'" 
+                    class="bg-transparent border-0 p-0 text-muted" style="font-size: 16px; cursor: pointer; opacity: 0.7; transition: opacity 0.2s;"
+                    onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+</body>
+
+</html>
+

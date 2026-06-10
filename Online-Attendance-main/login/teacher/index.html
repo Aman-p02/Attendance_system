@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('SW registered', reg.scope))
+        .catch(err => console.error('SW registration failed', err));
+    });
+  }
+</script>
+    <meta name="theme-color" content="#4481eb">
+    <link rel="icon" type="image/svg+xml" href="img/smartattend_logo.svg?v=4">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="../../img/smartattend_logo.svg?v=4">
+    
+    
+    <meta charset="UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="indexCSS.css">
+    <title>Teacher | Dashboard</title>
+    <style>
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: #f0f4ff !important; 
+            min-height: 100vh !important; 
+            height: auto !important; 
+            display: flex !important; 
+            flex-direction: column !important;
+            align-items: center !important; 
+            justify-content: flex-start !important; 
+            padding: 40px 0 !important; 
+            box-sizing: border-box !important; 
+        }
+        .dashboard { 
+            background: #fff; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 40px rgba(68,129,235,0.15); 
+            padding: 30px 40px; 
+            max-width: 500px; 
+            width: 95%; 
+            text-align: center; 
+            margin: 0 auto !important; 
+        }
+        .dash-header { font-size: 24px; font-weight: 700; color: #333; margin-bottom: 5px; }
+        .dash-sub { font-size: 13px; color: #888; margin-bottom: 20px; }
+        
+        /* Form grid for inputs */
+        .input-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .input-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 5px;
+        }
+        .input-group input, .input-group select {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+            outline: none;
+            transition: border 0.3s;
+        }
+        .input-group input:focus, .input-group select:focus {
+            border-color: #4481eb;
+        }
+        /* Full width for subject */
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .otp-display { font-size: 50px; font-weight: 800; color: #4481eb; letter-spacing: 8px; min-height: 70px; transition: all 0.3s; margin-top: 10px; }
+        
+        .btn-generate { background: linear-gradient(135deg, #4481eb, #04befe); color: #fff; border: none; padding: 12px 30px; border-radius: 50px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s; box-shadow: 0 5px 15px rgba(68,129,235,0.3); width: 100%; }
+        .btn-generate:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(68,129,235,0.5); }
+        .btn-generate:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        
+        .timer-display { font-size: 26px; font-weight: 700; color: #e74c3c; margin: 10px 0; }
+        .present-count { background: linear-gradient(135deg, #11998e, #38ef7d); color: #fff; border-radius: 12px; padding: 12px 20px; font-size: 16px; font-weight: 600; margin: 15px 0; }
+        
+        .btn-row { display: flex; gap: 10px; justify-content: center; margin-top: 15px; flex-wrap: wrap; }
+        .btn-logout { background: #e74c3c; color: #fff; border: none; padding: 10px 25px; border-radius: 50px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; flex: 1; }
+        .btn-logout:hover { background: #c0392b; }
+        .btn-pdf { background: linear-gradient(135deg, #6c3483, #a569bd); color: #fff; border: none; padding: 10px 25px; border-radius: 50px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; flex: 1; }
+        .btn-pdf:hover { opacity: 0.9; transform: translateY(-1px); }
+        
+        .divider { height: 1px; background: #f0f0f0; margin: 15px 0; }
+        .status-msg { font-size: 12px; color: #888; min-height: 18px; margin-bottom: 10px; }
+    </style>
+    <style>
+        /* Global App Button Styles */
+        button, 
+        .btn, 
+        input[type="submit"], 
+        .toggle-eye, 
+        .nav_btn, 
+        .btn_primary {
+            -webkit-tap-highlight-color: transparent !important;
+            user-select: none !important;
+            -webkit-user-select: none !important;
+            cursor: pointer !important;
+            text-decoration: none !important;
+        }
+        button:focus, 
+        .btn:focus, 
+        input[type="submit"]:focus {
+            outline: none !important;
+        }
+    </style>
+    <script>
+        // Anti-Inspect Script
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.addEventListener('keydown', event => {
+            if (event.keyCode === 123 || 
+               (event.ctrlKey && event.shiftKey && (event.keyCode === 73 || event.keyCode === 74)) || 
+               (event.ctrlKey && event.keyCode === 85)) {
+                event.preventDefault();
+                return false;
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="dash-header" id="welcomeMsg">Welcome, Teacher</div>
+        <div class="dash-sub">Online Attendance System</div>
+
+        <!-- Inputs before OTP -->
+        <div class="input-grid">
+            <div class="input-group">
+                <label>Date</label>
+                <input type="date" id="inputDate" required>
+            </div>
+            <div class="input-group">
+                <label>Time</label>
+                <input type="time" id="inputTime" required>
+            </div>
+            <div class="input-group">
+                <label>Semester</label>
+                <select id="inputSem" required>
+                    <option value="" disabled selected>Select Sem</option>
+                    <option value="1">Semester 1</option>
+                    <option value="2">Semester 2</option>
+                    <option value="3">Semester 3</option>
+                    <option value="4">Semester 4</option>
+                    <option value="5">Semester 5</option>
+                    <option value="6">Semester 6</option>
+                    <option value="7">Semester 7</option>
+                    <option value="8">Semester 8</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Division (Can select multiple)</label>
+                <div class="div-checkboxes" style="display: flex; gap: 15px; margin-top: 5px; align-items: center; justify-content: start;">
+                    <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; margin:0;"><input type="checkbox" name="divCB" value="A"> A</label>
+                    <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; margin:0;"><input type="checkbox" name="divCB" value="B"> B</label>
+                    <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; margin:0;"><input type="checkbox" name="divCB" value="C"> C</label>
+                </div>
+            </div>
+            <div class="input-group full-width">
+                <label>Subject</label>
+                <input type="text" id="subjectInput" placeholder="e.g. Mathematics" required>
+            </div>
+        </div>
+
+        <button class="btn-generate" id="generateBtn" onclick="generateOTP()">
+            <i class="fas fa-key"></i> Generate OTP
+        </button>
+
+        <div class="divider"></div>
+
+        <div class="otp-display" id="otpDisplay">----</div>
+        <div class="timer-display" id="timer">00:15</div>
+
+        <div class="present-count" id="presentCount">
+            <i class="fas fa-user-check"></i> Present Students: 0
+        </div>
+
+        <p class="status-msg" id="statusMsg"></p>
+
+        <div class="btn-row">
+            <button class="btn-pdf" onclick="downloadPDF()">
+                <i class="fas fa-file-pdf"></i> Download PDF
+            </button>
+            <button class="btn-logout" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Log Out
+            </button>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Date Range Report Section -->
+        <div style="text-align: left; background: rgba(68,129,235,0.03); padding: 15px 20px; border-radius: 12px; border: 1px dashed rgba(68,129,235,0.2); margin-top: 15px;">
+            <div style="font-size: 13px; font-weight: 700; color: #292930; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; font-family: 'Poppins', sans-serif;">
+                <i class="fas fa-calendar-alt" style="color: #4481eb;"></i> Date Range Reports (Register)
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+                <div class="input-group">
+                    <label style="font-size: 10px; font-weight: 600; color: #666; margin-bottom: 3px;">From Date</label>
+                    <input type="date" id="rangeFromDate" style="padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-size: 12px; outline: none; font-family: 'Poppins', sans-serif;">
+                </div>
+                <div class="input-group">
+                    <label style="font-size: 10px; font-weight: 600; color: #666; margin-bottom: 3px;">To Date</label>
+                    <input type="date" id="rangeToDate" style="padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-size: 12px; outline: none; font-family: 'Poppins', sans-serif;">
+                </div>
+            </div>
+            <div class="btn-row" style="display: flex; gap: 10px; margin-top: 5px;">
+                <button class="btn-pdf" id="btnRangePdf" onclick="downloadRangeReport('pdf')" style="background: linear-gradient(135deg, #11998e, #38ef7d); font-size: 11px; padding: 10px 15px; border-radius: 50px; border: none; font-weight: 600; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; flex: 1;">
+                    <i class="fas fa-file-pdf"></i> Range PDF
+                </button>
+                <button class="btn-pdf" id="btnRangeExcel" onclick="downloadRangeReport('excel')" style="background: linear-gradient(135deg, #f39c12, #d35400); font-size: 11px; padding: 10px 15px; border-radius: 50px; border: none; font-weight: 600; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; flex: 1;">
+                    <i class="fas fa-file-excel"></i> Range Excel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Supabase + jsPDF -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script>
+        const SUPABASE_URL = 'https://jmnwximojkkzkitegkaf.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_k6eyinUYnJiXvyTc_ADIPA_UhueHalO';
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        const teacherUsername = localStorage.getItem('teacherUsername');
+        const teacherName     = localStorage.getItem('teacherName');
+
+        // Auth guard
+        if (!teacherUsername) { window.location.href = 'login.html'; }
+
+        document.getElementById('welcomeMsg').textContent = 'Hello, ' + teacherName + '!';
+
+        // Pre-fill Date and Time
+        const now = new Date();
+        document.getElementById('inputDate').value = now.toISOString().split('T')[0];
+        document.getElementById('inputTime').value = now.toTimeString().split(' ')[0].substring(0,5);
+
+        let timerInterval = null;
+        let isSessionActive = false; // Tracks if an active OTP session is running
+
+        // ---- Load present count ----
+        async function init() {
+            await refreshPresentCount();
+
+            // Add live change listeners to update present count immediately
+            document.getElementById('inputDate').addEventListener('change', refreshPresentCount);
+            document.getElementById('inputSem').addEventListener('change', refreshPresentCount);
+            document.getElementById('subjectInput').addEventListener('input', refreshPresentCount);
+            document.querySelectorAll('input[name="divCB"]').forEach(cb => {
+                cb.addEventListener('change', refreshPresentCount);
+            });
+        }
+
+        // ---- Present count ----
+        async function refreshPresentCount() {
+            if (!isSessionActive) {
+                document.getElementById('presentCount').innerHTML =
+                    `<i class="fas fa-user-check"></i> Present Students: 0`;
+                return;
+            }
+
+            const tDate = document.getElementById('inputDate').value || new Date().toISOString().split('T')[0];
+            const tSem  = document.getElementById('inputSem').value;
+            const tSub  = document.getElementById('subjectInput').value.trim();
+            const divCheckboxes = document.querySelectorAll('input[name="divCB"]:checked');
+            const tDivArray = Array.from(divCheckboxes).map(cb => cb.value);
+
+            let query = sb
+                .from('attendance')
+                .select('*', { count: 'exact', head: true })
+                .eq('teacher_username', teacherUsername)
+                .neq('rollno', 'SYSTEM_SESSION_PLACEHOLDER') // Exclude placeholder
+                .gte('created_at', tDate + 'T00:00:00+00:00')
+                .lte('created_at', tDate + 'T23:59:59+00:00');
+
+            if (tSub) {
+                query = query.eq('subject', tSub);
+            }
+            if (tSem && tSem !== '-') {
+                query = query.eq('semester', tSem);
+            }
+            if (tDivArray.length > 0 && tDivArray[0] !== '-') {
+                query = query.in('division', tDivArray);
+            }
+
+            const { count } = await query;
+
+            document.getElementById('presentCount').innerHTML =
+                `<i class="fas fa-user-check"></i> Present Students: ${count || 0}`;
+        }
+
+        // ---- Generate OTP ----
+        async function generateOTP() {
+            // Validation
+            const tDate = document.getElementById('inputDate').value;
+            const tTime = document.getElementById('inputTime').value;
+            const tSem  = document.getElementById('inputSem').value;
+            
+            const divCheckboxes = document.querySelectorAll('input[name="divCB"]:checked');
+            const tDivArray = Array.from(divCheckboxes).map(cb => cb.value);
+            const tDiv = tDivArray.join(',');
+
+            const tSub  = document.getElementById('subjectInput').value.trim();
+
+            if(!tDate || !tTime || !tSem || tDivArray.length === 0 || !tSub) {
+                document.getElementById('statusMsg').textContent = 'Please fill all details and select at least one division.';
+                document.getElementById('statusMsg').style.color = 'red';
+                return;
+            }
+
+            const btn = document.getElementById('generateBtn');
+            btn.disabled = true;
+            isSessionActive = true; // Set active session state to true
+
+            const otp = String(Math.floor(1000 + Math.random() * 9000));
+
+            let { error, data } = await sb.from('allteacher').update({
+                otp: otp,
+                teachersub: tSub,
+                division: tDiv || null,
+                semester: tSem || null,
+                session_date: tDate
+            }).eq('username', teacherUsername);
+
+            if (error) {
+                console.warn('Updating with session_date failed, trying fallback without it...', error);
+                const { error: fallbackError } = await sb.from('allteacher').update({
+                    otp: otp,
+                    teachersub: tSub,
+                    division: tDiv || null,
+                    semester: tSem || null
+                }).eq('username', teacherUsername);
+
+                if (fallbackError) {
+                    console.error('Supabase OTP fallback update error:', fallbackError);
+                    document.getElementById('statusMsg').textContent = `Error generating OTP: ${fallbackError.message || fallbackError}`;
+                    btn.disabled = false;
+                    return;
+                }
+            }
+
+            // Insert session placeholder rows to record that a session was held on this date,
+            // even if 0 students are present. This ensures the date shows up in cumulative registers.
+            for (const div of tDivArray) {
+                // Check if a placeholder already exists for this exact session
+                const { data: existingPlaceholder } = await sb
+                    .from('attendance')
+                    .select('id')
+                    .eq('teacher_username', teacherUsername)
+                    .eq('rollno', 'SYSTEM_SESSION_PLACEHOLDER')
+                    .eq('subject', tSub)
+                    .eq('semester', tSem)
+                    .eq('division', div)
+                    .gte('created_at', tDate + 'T00:00:00+00:00')
+                    .lte('created_at', tDate + 'T23:59:59+00:00')
+                    .maybeSingle();
+
+                if (!existingPlaceholder) {
+                    const nowTime = new Date().toTimeString().split(' ')[0];
+                    const sessionCreatedAt = tDate + 'T' + nowTime + '.000Z';
+
+                    await sb.from('attendance').insert([{
+                        teacher_username: teacherUsername,
+                        rollno: 'SYSTEM_SESSION_PLACEHOLDER',
+                        studentName: 'SYSTEM_SESSION_PLACEHOLDER',
+                        studentname: 'SYSTEM_SESSION_PLACEHOLDER',
+                        subject: tSub,
+                        semester: tSem,
+                        division: div,
+                        created_at: sessionCreatedAt
+                    }]);
+                }
+            }
+
+            document.getElementById('otpDisplay').textContent = otp;
+            document.getElementById('statusMsg').textContent  = 'OTP active for 15 seconds';
+            document.getElementById('statusMsg').style.color  = '#888';
+
+            // Start countdown
+            clearInterval(timerInterval);
+            let timeLeft = 15;
+            updateTimer(timeLeft);
+
+            timerInterval = setInterval(async () => {
+                timeLeft--;
+                updateTimer(timeLeft);
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    // Reset OTP
+                    await sb.from('allteacher').update({ otp: '123' }).eq('username', teacherUsername);
+                    document.getElementById('otpDisplay').textContent = '----';
+                    document.getElementById('statusMsg').textContent  = 'OTP expired. Generate a new one.';
+                    btn.disabled = false;
+
+                    // Keep present count refreshing for 20 more seconds to capture late submissions, then reset to 0 in UI
+                    setTimeout(async () => {
+                        isSessionActive = false;
+                        await refreshPresentCount();
+                    }, 20000);
+                }
+            }, 1000);
+        }
+
+        function updateTimer(seconds) {
+            const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+            const s = String(seconds % 60).padStart(2, '0');
+            document.getElementById('timer').textContent = m + ':' + s;
+        }
+
+        // ---- Download PDF ----
+        async function downloadPDF() {
+            const today = new Date().toISOString().split('T')[0];
+
+            // Form values
+            const tDate = document.getElementById('inputDate').value || today;
+            const tTime = document.getElementById('inputTime').value || '';
+            const tSem  = document.getElementById('inputSem').value || '-';
+
+            const divCheckboxes = document.querySelectorAll('input[name="divCB"]:checked');
+            const tDivArray = Array.from(divCheckboxes).map(cb => cb.value);
+            const tDiv = tDivArray.length > 0 ? tDivArray.join(',') : '-';
+
+            const tSub = document.getElementById('subjectInput').value.trim() || '-';
+
+            // Fetch PRESENT roll numbers for the selected session's date, subject, semester, and division(s)
+            let presentQuery = sb
+                .from('attendance')
+                .select('rollno')
+                .eq('teacher_username', teacherUsername)
+                .neq('rollno', 'SYSTEM_SESSION_PLACEHOLDER') // Exclude placeholder
+                .eq('subject', tSub)
+                .eq('semester', tSem)
+                .gte('created_at', tDate + 'T00:00:00+00:00')
+                .lte('created_at', tDate + 'T23:59:59+00:00');
+
+            if (tDivArray.length > 0 && tDivArray[0] !== '-') {
+                presentQuery = presentQuery.in('division', tDivArray);
+            }
+
+            const { data: presentData } = await presentQuery;
+
+            const presentSet = new Set((presentData || []).map(r => String(r.rollno).trim().toLowerCase()));
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // ── Helper: draw the page header ──────────────────────────────────────
+            function addPageHeader(divLabel) {
+                doc.setFontSize(14);
+                doc.setFont('helvetica', 'bold');
+                doc.text('GEC modasa Computer Enginnering', 105, 15, { align: 'center' });
+                doc.text('ONLINE ATTENDANCE', 105, 23, { align: 'center' });
+
+                doc.setFontSize(11);
+                doc.setFont('helvetica', 'normal');
+                doc.text('Date      : ' + tDate, 14, 36);
+                doc.text('Time      : ' + tTime, 14, 42);
+                doc.text('Faculty   : ' + (teacherName || teacherUsername), 14, 48);
+
+                doc.text('Semester  : ' + tSem, 100, 36);
+                doc.text('Division  : ' + divLabel, 100, 42);
+                doc.text('Subject   : ' + tSub, 100, 48);
+            }
+
+            // ── Helper: sort a student list by roll number ────────────────────────
+            function sortStudents(list) {
+                return list.sort((a, b) => {
+                    const numA = parseInt(a.rollno, 10);
+                    const numB = parseInt(b.rollno, 10);
+                    if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+                    return String(a.rollno).localeCompare(String(b.rollno));
+                });
+            }
+
+            // ── Helper: draw the attendance table ────────────────────────────────
+            function addTable(list, presentCount, totalCount) {
+                doc.setFontSize(11);
+                doc.setFont('helvetica', 'normal');
+                doc.text('Total Present : ' + presentCount + ' / ' + totalCount, 14, 56);
+
+                doc.autoTable({
+                    startY: 62,
+                    head: [['Roll No', 'Student Name', 'Status']],
+                    body: list.map(r => [r.rollno, r.studentName || '-', r.status]),
+                    headStyles: { fillColor: [68, 129, 235], fontStyle: 'bold' },
+                    alternateRowStyles: { fillColor: [240, 248, 255] },
+                    styles: { halign: 'center', fontSize: 11 },
+                    didParseCell: function(data) {
+                        if (data.section === 'body' && data.column.index === 2) {
+                            if (data.cell.raw === 'Present') {
+                                data.cell.styles.textColor = [34, 139, 34];
+                                data.cell.styles.fontStyle = 'bold';
+                            } else {
+                                data.cell.styles.textColor = [220, 20, 60];
+                                data.cell.styles.fontStyle = 'bold';
+                            }
+                        }
+                    }
+                });
+            }
+
+            // ═══════════════════════════════════════════════════════════════════
+            // CASE A: Single division (or none selected) → simple single-page PDF
+            // ═══════════════════════════════════════════════════════════════════
+            if (tDivArray.length <= 1) {
+                let query = sb.from('allstudent').select('rollno, studentName, studentname, division');
+                if (tSem && tSem !== '-') query = query.eq('semester', tSem);
+                if (tDivArray.length === 1) query = query.eq('division', tDivArray[0]);
+                const { data: allStudentsData } = await query;
+
+                let finalList = sortStudents((allStudentsData || []).map(student => ({
+                    rollno: student.rollno,
+                    studentName: student.studentName || student.studentname || '-',
+                    status: presentSet.has(String(student.rollno).trim().toLowerCase()) ? 'Present' : 'Absent'
+                })));
+
+                const totalPresent = finalList.filter(r => r.status === 'Present').length;
+
+                addPageHeader(tDiv);
+                addTable(finalList, totalPresent, finalList.length);
+
+            // ═══════════════════════════════════════════════════════════════════
+            // CASE B: Multiple divisions → one page per division, clearly labelled
+            // ═══════════════════════════════════════════════════════════════════
+            } else {
+                let isFirstPage = true;
+
+                for (const div of tDivArray) {
+                    // Fetch students for this specific division
+                    let query = sb.from('allstudent')
+                        .select('rollno, studentName, studentname, division')
+                        .eq('division', div);
+                    if (tSem && tSem !== '-') query = query.eq('semester', tSem);
+                    const { data: divStudents } = await query;
+
+                    let divList = sortStudents((divStudents || []).map(student => ({
+                        rollno: student.rollno,
+                        studentName: student.studentName || student.studentname || '-',
+                        status: presentSet.has(String(student.rollno).trim().toLowerCase()) ? 'Present' : 'Absent'
+                    })));
+
+                    // Each division gets its own fresh page (except the very first)
+                    if (!isFirstPage) doc.addPage();
+                    isFirstPage = false;
+
+                    const divPresent = divList.filter(r => r.status === 'Present').length;
+
+                    addPageHeader('Division ' + div + '  (Sem ' + tSem + ')');
+                    addTable(divList, divPresent, divList.length);
+                }
+            }
+
+            // Ensure tSub is safe for filename (remove invalid characters if any)
+            const safeSub = tSub.replace(/[^a-z0-9]/gi, '_');
+            doc.save(`${teacherName}_${tDate}_${safeSub}.pdf`);
+
+            // PDF downloaded successfully
+            document.getElementById('statusMsg').textContent = 'PDF downloaded successfully!';
+            document.getElementById('statusMsg').style.color = 'green';
+
+            // Immediately reset active session state and set present students count display to 0
+            isSessionActive = false;
+            await refreshPresentCount();
+        }
+
+        // ---- Download Date Range Report (PDF / Excel) ----
+        async function downloadRangeReport(format) {
+            const fromDate = document.getElementById('rangeFromDate').value;
+            const toDate = document.getElementById('rangeToDate').value;
+
+            // Form inputs
+            const tSem  = document.getElementById('inputSem').value;
+            const divCheckboxes = document.querySelectorAll('input[name="divCB"]:checked');
+            const tDivArray = Array.from(divCheckboxes).map(cb => cb.value);
+            const tSub = document.getElementById('subjectInput').value.trim();
+
+            if (!fromDate || !toDate) {
+                document.getElementById('statusMsg').textContent = 'Please select both From and To dates for the range report.';
+                document.getElementById('statusMsg').style.color = 'red';
+                return;
+            }
+            if (!tSem || tDivArray.length === 0 || !tSub) {
+                document.getElementById('statusMsg').textContent = 'Please select Semester, Division and enter Subject.';
+                document.getElementById('statusMsg').style.color = 'red';
+                return;
+            }
+
+            document.getElementById('statusMsg').textContent = 'Generating range report, please wait...';
+            document.getElementById('statusMsg').style.color = '#888';
+
+            // 1. Fetch all students for the selected semester and division(s)
+            let studentQuery = sb.from('allstudent')
+                .select('rollno, studentName, studentname, division')
+                .eq('semester', tSem)
+                .in('division', tDivArray);
+            
+            const { data: allStudents, error: studentErr } = await studentQuery;
+            if (studentErr) {
+                console.error(studentErr);
+                document.getElementById('statusMsg').textContent = 'Error fetching students: ' + studentErr.message;
+                document.getElementById('statusMsg').style.color = 'red';
+                return;
+            }
+
+            if (!allStudents || allStudents.length === 0) {
+                document.getElementById('statusMsg').textContent = 'No students found in the selected Semester & Division.';
+                document.getElementById('statusMsg').style.color = 'red';
+                return;
+            }
+
+            // Sort students by division then roll number
+            const sortedStudents = allStudents.sort((a, b) => {
+                const divCompare = String(a.division).localeCompare(String(b.division));
+                if (divCompare !== 0) return divCompare;
+                const numA = parseInt(a.rollno, 10);
+                const numB = parseInt(b.rollno, 10);
+                if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+                return String(a.rollno).localeCompare(String(b.rollno));
+            });
+
+            // 2. Fetch attendance records for the selected range, teacher, semester, division(s), subject
+            let attQuery = sb.from('attendance')
+                .select('rollno, created_at, division')
+                .eq('teacher_username', teacherUsername)
+                .eq('subject', tSub)
+                .eq('semester', tSem)
+                .in('division', tDivArray)
+                .gte('created_at', fromDate + 'T00:00:00+00:00')
+                .lte('created_at', toDate + 'T23:59:59+00:00');
+
+            const { data: attRecords, error: attErr } = await attQuery;
+            if (attErr) {
+                console.error(attErr);
+                document.getElementById('statusMsg').textContent = 'Error fetching attendance records: ' + attErr.message;
+                document.getElementById('statusMsg').style.color = 'red';
+                return;
+            }
+
+            // 3. Process Dates (Extract unique dates, sorted chronologically)
+            const formatDateString = (dateStr) => {
+                const d = new Date(dateStr);
+                const day = String(d.getDate()).padStart(2, '0');
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const year = d.getFullYear();
+                return `${day}-${month}-${year}`;
+            };
+
+            const uniqueDates = new Set();
+            (attRecords || []).forEach(rec => {
+                uniqueDates.add(formatDateString(rec.created_at));
+            });
+
+            const sortedDates = Array.from(uniqueDates).sort((a, b) => {
+                const parseDate = (dStr) => {
+                    const [d, m, y] = dStr.split('-');
+                    return new Date(y, m - 1, d);
+                };
+                return parseDate(a) - parseDate(b);
+            });
+
+            if (sortedDates.length === 0) {
+                document.getElementById('statusMsg').textContent = 'No attendance history found in this date range.';
+                document.getElementById('statusMsg').style.color = 'red';
+                return;
+            }
+
+            // Map student presence: rollno_dateString -> true
+            const presentMap = {};
+            (attRecords || []).forEach(rec => {
+                const dateStr = formatDateString(rec.created_at);
+                const key = `${String(rec.rollno).trim().toLowerCase()}_${dateStr}`;
+                presentMap[key] = true;
+            });
+
+            // 4. Build attendance rows
+            const gridData = sortedStudents.map(student => {
+                let presentCount = 0;
+                const attendanceRow = {};
+                
+                sortedDates.forEach(dateStr => {
+                    const key = `${String(student.rollno).trim().toLowerCase()}_${dateStr}`;
+                    if (presentMap[key]) {
+                        attendanceRow[dateStr] = 'P';
+                        presentCount++;
+                    } else {
+                        attendanceRow[dateStr] = 'A';
+                    }
+                });
+                
+                const totalLectures = sortedDates.length;
+                const percentage = totalLectures > 0 ? ((presentCount / totalLectures) * 100).toFixed(1) + '%' : '0.0%';
+                
+                return {
+                    rollno: student.rollno,
+                    name: student.studentName || student.studentname || '-',
+                    division: student.division || '-',
+                    attendance: attendanceRow,
+                    stats: `${presentCount}/${totalLectures}`,
+                    percentage: percentage
+                };
+            });
+
+            // 5. Generate and Download
+            const safeSub = tSub.replace(/[^a-z0-9]/gi, '_');
+            
+            if (format === 'excel') {
+                // Generate CSV File
+                let csvContent = "Roll No,Name,Division,";
+                csvContent += sortedDates.join(",") + ",Total Present,Percentage\n";
+                
+                gridData.forEach(row => {
+                    const line = [
+                        `"${row.rollno}"`,
+                        `"${row.name}"`,
+                        `"${row.division}"`
+                    ];
+                    sortedDates.forEach(dateStr => {
+                        line.push(row.attendance[dateStr]);
+                    });
+                    line.push(`"${row.stats}"`);
+                    line.push(`"${row.percentage}"`);
+                    csvContent += line.join(",") + "\n";
+                });
+
+                // Download CSV trigger
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement("a");
+                const url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", `${teacherName || teacherUsername}_${safeSub}_Range_${fromDate}_to_${toDate}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                document.getElementById('statusMsg').textContent = 'Range Excel downloaded successfully!';
+                document.getElementById('statusMsg').style.color = 'green';
+            } else {
+                // Generate PDF File
+                const { jsPDF } = window.jspdf;
+                // Use Landscape if there are many columns (more than 5 dates)
+                const doc = new jsPDF({
+                    orientation: sortedDates.length > 5 ? 'landscape' : 'portrait'
+                });
+
+                const pageWidth = doc.internal.pageSize.getWidth();
+
+                doc.setFontSize(14);
+                doc.setFont('helvetica', 'bold');
+                doc.text('GEC Modasa - Computer Engineering', pageWidth / 2, 15, { align: 'center' });
+                doc.text('CUMULATIVE ATTENDANCE REGISTER', pageWidth / 2, 23, { align: 'center' });
+
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'normal');
+                doc.text(`Subject   : ${tSub}`, 14, 34);
+                doc.text(`Faculty   : ${teacherName || teacherUsername}`, 14, 40);
+                doc.text(`Semester  : ${tSem}`, 14, 46);
+
+                doc.text(`Date Range: ${fromDate} to ${toDate}`, pageWidth - 14, 34, { align: 'right' });
+                doc.text(`Divisions : ${tDivArray.join(', ')}`, pageWidth - 14, 40, { align: 'right' });
+
+                // Construct compact headers by shortening dates to "DD/MM" (e.g. "01-05-2026" -> "01/05")
+                const shortHeaders = sortedDates.map(dateStr => {
+                    const parts = dateStr.split('-');
+                    return parts.length >= 2 ? `${parts[0]}/${parts[1]}` : dateStr;
+                });
+
+                const tableHeaders = ['Roll No', 'Student Name', 'Div', ...shortHeaders, 'Present', '%'];
+                const tableBody = gridData.map(row => {
+                    const rowCells = [row.rollno, row.name, row.division];
+                    sortedDates.forEach(dateStr => {
+                        rowCells.push(row.attendance[dateStr]);
+                    });
+                    rowCells.push(row.stats, row.percentage);
+                    return rowCells;
+                });
+
+                // Mathematically calculate dynamic widths for each column to fit landscape / portrait beautifully
+                const colStyles = {
+                    0: { cellWidth: 28, halign: 'center' }, // Roll No (12-digit fits nicely in 28)
+                    1: { cellWidth: 38, halign: 'left', overflow: 'ellipsis' },   // Student Name (Un-squished, flat, ellipsis if overflow)
+                    2: { cellWidth: 10, halign: 'center' }  // Div
+                };
+
+                // Allocate narrow width for all date columns so they are clean and tight
+                let dateColWidth = 8;
+                if (sortedDates.length > 20) dateColWidth = 7.5;
+                else if (sortedDates.length > 15) dateColWidth = 8.5;
+                else if (sortedDates.length > 10) dateColWidth = 10;
+                else dateColWidth = 12;
+
+                for (let i = 0; i < sortedDates.length; i++) {
+                    colStyles[3 + i] = { cellWidth: dateColWidth, halign: 'center' };
+                }
+
+                // Stats and Percentage columns (last two columns)
+                const lastColIndex1 = 3 + sortedDates.length;
+                const lastColIndex2 = 4 + sortedDates.length;
+                colStyles[lastColIndex1] = { cellWidth: 16, halign: 'center' }; // Present Stats
+                colStyles[lastColIndex2] = { cellWidth: 15, halign: 'center' }; // Percentage
+
+                // Auto-scale base font size if there are many dates/columns
+                let fontSize = 9;
+                if (sortedDates.length > 20) fontSize = 6.5;
+                else if (sortedDates.length > 15) fontSize = 7.5;
+                else if (sortedDates.length > 10) fontSize = 8.5;
+
+                doc.autoTable({
+                    startY: 54,
+                    head: [tableHeaders],
+                    body: tableBody,
+                    headStyles: { fillColor: [68, 129, 235], fontStyle: 'bold' },
+                    alternateRowStyles: { fillColor: [245, 249, 255] },
+                    styles: { halign: 'center', fontSize: fontSize, cellPadding: 2, overflow: 'ellipis' },
+                    columnStyles: colStyles,
+                    didParseCell: function(data) {
+                        if (data.section === 'body' && data.column.index >= 3 && data.column.index < 3 + sortedDates.length) {
+                            if (data.cell.raw === 'P') {
+                                data.cell.styles.textColor = [34, 139, 34]; // Green
+                                data.cell.styles.fontStyle = 'bold';
+                            } else if (data.cell.raw === 'A') {
+                                data.cell.styles.textColor = [220, 20, 60]; // Red
+                                data.cell.styles.fontStyle = 'bold';
+                            }
+                        }
+                    }
+                });
+
+                doc.save(`${teacherName || teacherUsername}_${safeSub}_Range_${fromDate}_to_${toDate}.pdf`);
+                
+                document.getElementById('statusMsg').textContent = 'Range PDF downloaded successfully!';
+                document.getElementById('statusMsg').style.color = 'green';
+            }
+        }
+
+        // ---- Logout ----
+        function logout() {
+            localStorage.removeItem('teacherUsername');
+            localStorage.removeItem('teacherName');
+            window.location.href = 'login.html';
+        }
+
+        // Network Status Resilience & Low-Bandwidth Optimizations
+        window.addEventListener('offline', () => {
+            const statusEl = document.getElementById('statusMsg');
+            if (statusEl) {
+                statusEl.textContent = '⚠️ Network Disconnected! Please check your internet connection.';
+                statusEl.style.color = 'red';
+            }
+            const generateBtn = document.getElementById('generateBtn');
+            if (generateBtn) generateBtn.disabled = true;
+        });
+
+        window.addEventListener('online', () => {
+            const statusEl = document.getElementById('statusMsg');
+            if (statusEl) {
+                statusEl.textContent = '⚡ Connection Restored! You are back online.';
+                statusEl.style.color = 'green';
+            }
+            const generateBtn = document.getElementById('generateBtn');
+            if (generateBtn) generateBtn.disabled = false;
+            setTimeout(() => {
+                if (statusEl) statusEl.textContent = '';
+                refreshPresentCount();
+            }, 3000);
+        });
+
+        // Optimization: Pause DB live count auto-refresh when tab is inactive to save mobile data and battery
+        let autoRefreshInterval = null;
+        function startAutoRefresh() {
+            if (!autoRefreshInterval) {
+                autoRefreshInterval = setInterval(refreshPresentCount, 5000);
+            }
+        }
+        function stopAutoRefresh() {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+                autoRefreshInterval = null;
+            }
+        }
+
+        // Initialize auto refresh and init function
+        startAutoRefresh();
+        init();
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                stopAutoRefresh();
+            } else {
+                startAutoRefresh();
+                refreshPresentCount();
+            }
+        });
+    </script>
+</body>
+</html>
+
+
