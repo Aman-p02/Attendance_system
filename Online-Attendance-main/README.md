@@ -1,66 +1,23 @@
-<h1>Online Attendance System</h1>
+I developed a robust, real-time attendance management system designed to eliminate proxy attendance and automate the classroom check-in process. The solution is built as a Progressive Web App (PWA), providing a native-app-like experience that works seamlessly across all devices without requiring installation from an app store.
 
-*** 
+How it Works:
+Dynamic OTP Generation: Teachers generate a unique, session-specific OTP for their respective subjects.
+Time-Bound Validation: To prevent remote sharing, the OTP is strictly valid for only 10 seconds.
+Automated Backend Verification: The system instantly validates the OTP, correlating it with the specific student, teacher, and subject.
+Real-time Attendance Status: Attendance is automatically marked as 'Present' upon successful submission within the time limit; otherwise, it is logged as 'Absent'.
 
-<h2>Introduction</h2>
+Key Features & Impact:
 
-<p>Welcome to our Online Attendance System project! 
-This web-based solution is designed to streamline and 
-automate the attendance tracking process for both teachers 
-and students. The system allows teachers to generate a 
-secure 4-digit OTP (One-Time Password) that students can 
-use to mark their attendance.</p>
+Proxy-Free System: Eliminates the possibility of proxy attendance by enforcing strict time constraints.
+Cross-Platform Access: As a PWA, it ensures high accessibility for students and faculty on any device (mobile/desktop).
+Flexible Reporting: Teachers can generate and download attendance reports in PDF format for any custom date range, simplifying the review of past records.
+Time Efficiency: Significantly reduces manual effort and streamlines classroom administration.
 
-<img src="Screenshot/index.png">
+Technologies Used:
+Frontend: React.js, HTML, CSS, JavaScript
+Backend: Node.js
+Database: Supabase (PostgreSQL)
+Architecture: Progressive Web App (PWA)
 
-<h2>Features</h2>
-1. OTP-Based Attendance:
-<ul>
-    <li>Teachers can generate a 4-digit OTP for each class session.</li>
-    <li>Students are required to enter the OTP within a 15-second window on 
-    the web platform or through the dedicated mobile app.</li>
-</ul>
-
-2. Real-Time Attendance Tracking:
-<ul>
-    <li>Attendance records are updated in real-time as students 
-    successfully enter the correct OTP.</li>
-</ul>
-3. Automated Absence Recording:
-<ul>
-    <li>If the OTP is not entered within the 15-second timeframe, 
-    the system marks the student as absent.</li>
-</ul>
-4. PDF Attendance Reports:
-<ul>
-    <li>Teachers have the ability to download a PDF format list of present 
-students at any time, providing a convenient way to manage attendance records.</li>
-</ul>
-5. Mobile App Integration:
-<ul>
-    <li>We have developed a mobile app for students, enabling them to easily and 
-quickly enter the OTP from their smartphones.</li>
-</ul>
-<img src="Screenshot/login.png">
-<h2>How It Works</h2>
-
-<li><b>Teacher Side:</b></li>
-<ol>
-    <li>Log in to the web portal.</li>
-    <li>Select the class and generate a 4-digit OTP.</li>
-    <li>The OTP is valid for 15 seconds.</li>
-    <li>Download a PDF report of present students at any time.</li>
-</ol>
-
-<li><b>Student Side:</b></li>
-<ol>
-    <li>Log in to the web platform or use the mobile app.</li>
-    <li>Enter the 4-digit OTP within the 15-second timeframe to mark attendance.</li>
-</ol>
-
-***
-
-<p>Our Online Attendance System aims to simplify the attendance 
-tracking process, reduce manual effort, and enhance efficiency 
-for both teachers and students. Thank you for choosing our 
-solution!</p>
+You can check it out using this link 🔗 
+https://systemattend.netlify.app
